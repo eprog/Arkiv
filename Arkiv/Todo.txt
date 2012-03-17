@@ -1,0 +1,5 @@
+Things left to do:
+
+1. Add preferences such as email address and if mails shall be sent.
+2. Add help
+3. Add About

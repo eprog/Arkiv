@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
@@ -152,7 +152,8 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		try {
 			camera = Camera.open();
 			camera.setPreviewDisplay(holder);
-			camera.startPreview();
+			//camera.setDisplayOrientation(90);
+			camera.startPreview();			
 		} catch (IOException e) {
 			Log.d("Arkiv", e.getMessage());
 		}

@@ -3,3 +3,15 @@ Things left to do:
 1. Add preferences such as email address and if mails shall be sent.
 2. Add help
 3. Add About
+
+
+Known issues:
+
+1. Camera preview orientation not working correct.
+   Without adjustment the camera preview will be wrong (90 degrees) in Portrait mode.
+   With adjustment the camera preview will be wrong in Landscape mode.
+
+2. Email is not sent directly because Google don't allow it for security reasons.
+   To support this "sendmail" needs to be implemented in the App. Not worth it!
+   
+ 

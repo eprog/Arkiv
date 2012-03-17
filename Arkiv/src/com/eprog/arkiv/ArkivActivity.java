@@ -9,8 +9,8 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
@@ -46,7 +46,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
     
     @Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		
 		if (camera != null) {
@@ -56,7 +55,16 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		}
 	}
 
-
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
+        SurfaceHolder holder = surface.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        holder.setFixedSize(300, 200);
+	}
 
 	private void createFolder(String path) {
     	File folder = new File(path);
@@ -152,12 +160,22 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		try {
 			camera = Camera.open();
 			camera.setPreviewDisplay(holder);
-			//camera.setDisplayOrientation(90);
+			camera.setDisplayOrientation(90);
 			camera.startPreview();			
+			camera.autoFocus(autoFocusCallback);
 		} catch (IOException e) {
 			Log.d("Arkiv", e.getMessage());
 		}
 	}
+	
+	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+
+		public void onAutoFocus(boolean arg0, Camera arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		if (camera != null) {
@@ -175,7 +193,9 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
 		sendIntent.putExtra(Intent.EXTRA_EMAIL,
 				new String[] { "eckejonsson@gmail.com" }); // TODO Get address from settings
-		sendIntent.setType("message/rfc822");
+//		sendIntent.setType("message/rfc822");
+		sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		sendIntent.setType("plain/txt");
 		startActivity(Intent.createChooser(sendIntent, "Title:")); 
 	}
 	

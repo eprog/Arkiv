@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.82" >
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill_horizontal"
+            android:gravity="center_horizontal" >
+            
+            <Button
+            	android:id="@+id/buttonIntyg"
+            	android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="clickHandler"
+            	android:text="@string/buttonIntyg" />
+
+			<Button
+			    android:id="@+id/buttonLedighet"
+			    android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="clickHandler"
+			    android:text="@string/buttonLedighet" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/buttonKvitto"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="clickHandler"
+                android:text="@string/buttonKvitto" />
+
+            <Button
+                android:id="@+id/buttonFaktura"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="clickHandler"
+                android:text="@string/buttonFaktura" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+
+            <Button
+                android:id="@+id/buttonOther"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="clickHandler"
+                android:text="@string/buttonOther" />
+
+            <Button
+                android:id="@+id/buttonLog"
+                android:layout_width="0dip"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:onClick="clickHandler"
+                android:text="@string/buttonLog" />
+
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
+            
+            <SurfaceView 
+                android:id="@+id/surface"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+            </SurfaceView>"
+        </TableRow>
+    </TableLayout>

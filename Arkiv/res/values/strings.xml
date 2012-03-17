@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, ArkivActivity!</string>
+    <string name="app_name">Arkiv</string>
+    <string name="buttonIntyg">Intyg</string>
+    <string name="buttonLedighet">Ledighet</string>
+    <string name="buttonKvitto">Kvitto</string>
+    <string name="buttonFaktura">Faktura</string>
+    <string name="buttonOther">Övrigt</string>
+    <string name="buttonLog">Arkiv</string>
+    <string name="intyg">Intyg</string>
+    <string name="emailBody">Detta mail är skickat från Androidapplikationen Arkiv så att innehållet kan lagras.</string>
+
+</resources>

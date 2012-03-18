@@ -222,6 +222,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		
 		switch (item.getItemId()) {
 		case R.id.menuPreferences:
+			startActivity(new Intent(this, Settings.class));
 			break;
 		case R.id.menuHelp:
 		{

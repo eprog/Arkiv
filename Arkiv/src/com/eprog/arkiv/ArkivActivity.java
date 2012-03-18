@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
@@ -16,9 +17,14 @@ import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	private Camera camera = null;
@@ -198,5 +204,54 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		sendIntent.setType("plain/txt");
 		startActivity(Intent.createChooser(sendIntent, "Title:")); 
 	}
+	
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.arkiv_menu, menu);
+		
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		super.onOptionsItemSelected(item);
+		
+		switch (item.getItemId()) {
+		case R.id.menuPreferences:
+			break;
+		case R.id.menuHelp:
+		{
+			Dialog d = new Dialog(this);
+			Window w = d.getWindow();
+			w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+
+			d.setTitle(R.string.helpTitle);
+			d.setContentView(R.layout.help);
+
+			d.show();
+		}
+		break;
+		case R.id.menuAbout:
+		{
+			Dialog d = new Dialog(this);
+			Window w = d.getWindow();
+			w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+
+			d.setTitle(R.string.aboutTitle);
+			d.setContentView(R.layout.about);
+
+			d.show();
+		}
+		break;
+		
+		}
+		
+		return true;
+	}
+	
 	
 }

@@ -11,5 +11,12 @@
     <string name="buttonLog">Arkiv</string>
     <string name="intyg">Intyg</string>
     <string name="emailBody">Detta mail är skickat från Androidapplikationen Arkiv så att innehållet kan lagras.</string>
+    <string name="menuPreferences">Inställningar</string>
+    <string name="menuHelp">Hjälp</string>
+    <string name="menuAbout">Om</string>
+    <string name="aboutTitle">Om Arkiv</string>
+    <string name="aboutText">Arkiv är skapat av Erik Jonsson 2012.</string>
+    <string name="helpTitle">Hjälp</string>
+    <string name="helpText">Arkiv är en Androidapp som kan spara viktiga dokument elektroniskt. Rikta mobilens kamera mot dokumentet du vill spara och tryck sedan på knappen för rätt kategori. En bild av dokumentet spara då på telefonens minneskort i katalogen Arkiv som har underkataloger för varje kategori. Om en epostadress är angiven under Inställningar så kan bilden även skickas via mejl. </string>
 
 </resources>

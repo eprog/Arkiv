@@ -10,6 +10,7 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -109,6 +110,18 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 
 		case R.id.buttonLog:
 			// Show folder "/sdcard/Arkiv" and make it possible to navigate to sub folders and view stored images.
+//			Uri uri = Uri.fromFile(new File("/sdcard/Arkiv", "*.jpg"));
+//			Intent intent = new Intent(Intent.ACTION_VIEW);
+//	        intent.setData(uri);
+//	        startActivity(intent);
+	        
+	        Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,
+                    "View Picture"), 1);
+
+
 			break;
 		}
     }
@@ -152,6 +165,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			} catch (IOException e) {
 				Log.d("onPictureTaken", e.getMessage());
 			}
+			
 			sendMail(folder, dirPath, filename);
 			camera.startPreview();
 		}
@@ -192,14 +206,21 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 	
 	private void sendMail(String type, String folder, String filename) {
+		
+		SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
+		Boolean sendMail = settings.getBoolean("sendEmail", false);
+		String emailAddress = settings.getString("emailAddress", null);
+		if (!sendMail || emailAddress == null) {
+			return;
+		}
+				
 		Uri uri = Uri.fromFile(new File(folder, filename));
 		
 		Intent sendIntent = new Intent(Intent.ACTION_SEND);
 		sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.emailBody));
 		sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
 		sendIntent.putExtra(Intent.EXTRA_EMAIL,
-				new String[] { "eckejonsson@gmail.com" }); // TODO Get address from settings
-//		sendIntent.setType("message/rfc822");
+				new String[] { emailAddress }); 
 		sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
 		sendIntent.setType("plain/txt");
 		startActivity(Intent.createChooser(sendIntent, "Title:")); 

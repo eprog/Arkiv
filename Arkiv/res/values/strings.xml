@@ -22,5 +22,6 @@
     <string name="preferenceEmailAddress">Epostaddress</string>
     <string name="preferenceSendEmail">Skicka epost</string>
     <string name="settingsTitle">Inställningar</string>
+    <string name="chooserTitle">Välj program</string>
 
 </resources>

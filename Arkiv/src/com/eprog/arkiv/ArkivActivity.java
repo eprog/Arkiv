@@ -225,7 +225,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 				new String[] { emailAddress }); 
 		sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
 		sendIntent.setType("plain/txt");
-		startActivity(Intent.createChooser(sendIntent, "Title:")); 
+		startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.chooserTitle))); 
 	}
 	
 

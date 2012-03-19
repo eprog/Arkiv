@@ -50,6 +50,7 @@ public final class R {
         public static final int buttonLedighet=0x7f050003;
         public static final int buttonLog=0x7f050007;
         public static final int buttonOther=0x7f050006;
+        public static final int chooserTitle=0x7f050015;
         public static final int emailBody=0x7f050009;
         public static final int hello=0x7f050000;
         public static final int helpText=0x7f050010;

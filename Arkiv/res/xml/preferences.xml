@@ -2,12 +2,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory android:title="@string/preferenceCategoryEmail">
         <EditTextPreference
-            android:key="emailAddress" 
-            android:title="@string/preferenceEmailAddress"/>
+            android:key="PREF_EMAIL_ADDRESS" 
+            android:title="@string/preferenceEmailAddress" />
         <CheckBoxPreference
-            android:key="sendEmail" 
-            android:title="@string/preferenceSendEmail"/>
+            android:key="PREF_SEND_MAIL" 
+            android:title="@string/preferenceSendEmail"
+        	android:defaultValue="false" />
     </PreferenceCategory>
-    
-
 </PreferenceScreen>

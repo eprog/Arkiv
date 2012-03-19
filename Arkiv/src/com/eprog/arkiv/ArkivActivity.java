@@ -17,6 +17,7 @@ import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -206,10 +207,10 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 	
 	private void sendMail(String type, String folder, String filename) {
-		
-		SharedPreferences settings = getSharedPreferences("preferences", MODE_PRIVATE);
-		Boolean sendMail = settings.getBoolean("sendEmail", false);
-		String emailAddress = settings.getString("emailAddress", null);
+		// Check if mail shall be sent
+		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		Boolean sendMail = settings.getBoolean("PREF_SEND_MAIL", false);
+		String emailAddress = settings.getString("PREF_EMAIL_ADDRESS", null);
 		if (!sendMail || emailAddress == null) {
 			return;
 		}

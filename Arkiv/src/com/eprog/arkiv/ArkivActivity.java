@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -248,26 +249,22 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			break;
 		case R.id.menuHelp:
 		{
-			Dialog d = new Dialog(this);
-			Window w = d.getWindow();
+			AlertDialog helpDialog = new AlertDialog.Builder(this).create();
+			Window w = helpDialog.getWindow();
 			w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-
-			d.setTitle(R.string.helpTitle);
-			d.setContentView(R.layout.help);
-
-			d.show();
+			helpDialog.setTitle(R.string.helpTitle);
+			helpDialog.setMessage(getResources().getText(R.string.helpText));
+			helpDialog.show();
 		}
 		break;
 		case R.id.menuAbout:
 		{
-			Dialog d = new Dialog(this);
-			Window w = d.getWindow();
+			AlertDialog aboutDialog = new AlertDialog.Builder(this).create();
+			Window w = aboutDialog.getWindow();
 			w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-
-			d.setTitle(R.string.aboutTitle);
-			d.setContentView(R.layout.about);
-
-			d.show();
+			aboutDialog.setTitle(R.string.aboutTitle);
+			aboutDialog.setMessage(getResources().getText(R.string.aboutText));
+			aboutDialog.show();
 		}
 		break;
 		

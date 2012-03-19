@@ -2,7 +2,6 @@ Things left to do:
 
 1. Verify on different mobiles and different Android versions.
 2. Implement own image gallery to only show archived items.
-3. Add theme to dialogs.
 
 Known issues:
 

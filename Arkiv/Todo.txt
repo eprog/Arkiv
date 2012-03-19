@@ -2,6 +2,7 @@ Things left to do:
 
 1. Verify on different mobiles and different Android versions.
 2. Implement own image gallery to only show archived items.
+3. Add theme to dialogs.
 
 Known issues:
 
@@ -11,5 +12,9 @@ Known issues:
 
 2. Email is not sent directly because Google don't allow it for security reasons.
    To support this "sendmail" needs to be implemented in the App. Not worth it!
+   
+3. The Arkiv button opens the Gallery app which shows all image folders, not only thos related to this app.
+
+4. When returning from the Gallery the camera preview is not working.
    
  

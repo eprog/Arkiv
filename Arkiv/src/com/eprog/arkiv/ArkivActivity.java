@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	private static final int SELECT_PROGRAM = 0;
@@ -216,7 +217,19 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		this.folder = folder;
 	
 		if (camera != null) {
-			camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+			camera.autoFocus(new AutoFocusCallback() {
+				
+				public void onAutoFocus(boolean success, Camera camera) {
+					if (success) {
+						camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+					} else {
+						// Inform user that the camera could not focus.
+						Toast toast = Toast.makeText(getApplicationContext(), R.string.noFocus, Toast.LENGTH_SHORT);
+						toast.show();
+					}
+				}
+			});
+			
 		}
 	}
 	

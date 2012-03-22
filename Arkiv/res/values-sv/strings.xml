@@ -27,5 +27,6 @@
     <string name="preferenceSubCategories">Använd underkategorier</string>
     <string name="settingsTitle">Inställningar</string>
     <string name="chooserTitle">Välj program</string>
+    <string name="noFocus">Kameran kunde ej fokusera!</string>
 
 </resources>

@@ -9,4 +9,24 @@
             android:title="@string/preferenceSendEmail"
         	android:defaultValue="false" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preferenceCategoryScreen">
+        <CheckBoxPreference
+            android:key="PREF_STATUS_BAR" 
+            android:title="@string/preferenceStatusBar" 
+            android:defaultValue="true" />
+        <!--  
+        <CheckBoxPreference
+            android:key="PREF_BUTTONS_ON_TOP" 
+            android:title="@string/preferenceButtonsOnTop"
+        	android:defaultValue="true" />
+        -->
+    </PreferenceCategory>
+    <!-- 
+    <PreferenceCategory android:title="@string/preferenceCategoryCategories">
+        <CheckBoxPreference
+            android:key="PREF_USE_SUBCATEGORIES" 
+            android:title="@string/preferenceSubCategories" 
+            android:defaultValue="false" />
+    </PreferenceCategory>
+    -->
 </PreferenceScreen>

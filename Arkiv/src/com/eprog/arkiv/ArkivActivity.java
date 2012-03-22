@@ -9,9 +9,11 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.PictureCallback;
@@ -19,6 +21,7 @@ import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,10 +31,15 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
+	private static final int SELECT_FROM_ARCHIVE = 1;
 	private Camera camera = null;
 	private String folder = null;
+	private Uri selectedImageUri;
+	private ImageView imageView;
+	private SharedPreferences settings;
 	
     /** Called when the activity is first created. */
     @Override
@@ -39,12 +47,15 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-        SurfaceHolder holder = surface.getHolder();
-        holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        holder.setFixedSize(300, 200);
-        
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+//        Boolean onTop = settings.getBoolean("PREF_BUTTONS_ON_TOP", true);
+//		if (onTop) {
+//			setContentView(R.layout.main);
+//		} else {
+//			setContentView(R.layout.main2);
+//		}
+		
         // Create folders
         createFolder("/sdcard/Arkiv/Intyg");
         createFolder("/sdcard/Arkiv/Ledighet");
@@ -67,6 +78,24 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		Boolean statusbar = settings.getBoolean("PREF_STATUS_BAR", true);
+		if (statusbar) {
+			WindowManager.LayoutParams attrs = getWindow().getAttributes();
+	        attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+	        getWindow().setAttributes(attrs);
+		} else {
+			WindowManager.LayoutParams attrs = getWindow().getAttributes();
+	        attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+	        getWindow().setAttributes(attrs);
+		}
+		
+//		Boolean onTop = settings.getBoolean("PREF_BUTTONS_ON_TOP", true);
+//		if (onTop) {
+//			setContentView(R.layout.main);
+//		} else {
+//			setContentView(R.layout.main2);
+//		}
 		
 		SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
         SurfaceHolder holder = surface.getHolder();
@@ -111,28 +140,53 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			break;
 
 		case R.id.buttonLog:
-			// Show folder "/sdcard/Arkiv" and make it possible to navigate to sub folders and view stored images.
-//			Uri uri = Uri.fromFile(new File("/sdcard/Arkiv", "*.jpg"));
-//			Intent intent = new Intent(Intent.ACTION_VIEW);
-//	        intent.setData(uri);
-//	        startActivity(intent);
-	        
 	        Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-                    "View Picture"), 1);
-
-
+            startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.chooserTitle)), SELECT_FROM_ARCHIVE);
 			break;
 		}
+    }
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode != RESULT_OK) return;
+		 
+        Bitmap bitmap   = null;
+        String path     = "";
+ 
+        if (requestCode == SELECT_FROM_ARCHIVE) {
+            selectedImageUri = data.getData();
+            path = getRealPathFromURI(selectedImageUri); //from Gallery
+ 
+            if (path == null)
+                path = selectedImageUri.getPath(); //from File Manager
+ 
+            if (path != null)
+                bitmap  = BitmapFactory.decodeFile(path);
+        }
+        imageView.setImageBitmap(bitmap);
+	}
+	
+	public String getRealPathFromURI(Uri contentUri) {
+        String [] proj      = {MediaStore.Images.Media.DATA};
+        Cursor cursor       = managedQuery( contentUri, proj, null, null,null);
+ 
+        if (cursor == null) {
+        	return null;
+        }
+ 
+        int column_index    = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
     }
 
 	private void takePicture(String folder) {		
 		this.folder = folder;
 	
-		camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-		
+		if (camera != null) {
+			camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+		}
 	}
 	
 	ShutterCallback shutterCallback = new ShutterCallback() {
@@ -194,9 +248,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 
 		public void onAutoFocus(boolean arg0, Camera arg1) {
 			// TODO Auto-generated method stub
-			
 		}
-		
 	};
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -209,7 +261,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	
 	private void sendMail(String type, String folder, String filename) {
 		// Check if mail shall be sent
-		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		Boolean sendMail = settings.getBoolean("PREF_SEND_MAIL", false);
 		String emailAddress = settings.getString("PREF_EMAIL_ADDRESS", null);
 		if (!sendMail || emailAddress == null) {
@@ -242,7 +294,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		super.onOptionsItemSelected(item);
-		
+
 		switch (item.getItemId()) {
 		case R.id.menuPreferences:
 			startActivity(new Intent(this, Settings.class));
@@ -267,11 +319,8 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			aboutDialog.show();
 		}
 		break;
-		
 		}
-		
 		return true;
 	}
-	
 	
 }

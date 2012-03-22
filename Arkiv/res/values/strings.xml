@@ -20,6 +20,11 @@
     <string name="preferenceCategoryEmail">Email preferences</string>
     <string name="preferenceEmailAddress">Email address</string>
     <string name="preferenceSendEmail">Send email</string>
+    <string name="preferenceCategoryScreen">Screen preferences</string>
+    <string name="preferenceStatusBar">Show status bar</string>
+    <string name="preferenceButtonsOnTop">Buttons on top</string>
+    <string name="preferenceCategoryCategories">Categories preferences</string>
+    <string name="preferenceSubCategories">Use sub-categories</string>
     <string name="settingsTitle">Preferences</string>
     <string name="chooserTitle">Choose program</string>
 

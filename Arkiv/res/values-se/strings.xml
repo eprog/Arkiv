@@ -20,6 +20,11 @@
     <string name="preferenceCategoryEmail">Epostinställningar</string>
     <string name="preferenceEmailAddress">Epostaddress</string>
     <string name="preferenceSendEmail">Skicka epost</string>
+    <string name="preferenceCategoryScreen">Skärm preferences</string>
+    <string name="preferenceStatusBar">Visa statusbar</string>
+    <string name="preferenceButtonsOnTop">Knapparna längst upp</string>
+    <string name="preferenceCategoryCategories">Kategoriinställningar</string>
+    <string name="preferenceSubCategories">Använd underkategorier</string>
     <string name="settingsTitle">Inställningar</string>
     <string name="chooserTitle">Välj program</string>
 

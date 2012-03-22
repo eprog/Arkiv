@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.net.Uri;
@@ -98,6 +99,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 //		} else {
 //			setContentView(R.layout.main2);
 //		}
+		
 	}
 
 	private void createFolder(String path) {
@@ -148,7 +150,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode != RESULT_OK) {
 			// Operation was cancelled, reactivate camera if needed
-			activateCamera();
+			activateCamera(null);
 			return;
 		}
 		 
@@ -181,20 +183,27 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         return cursor.getString(column_index);
     }
 	
-	private void activateCamera() {
+	private void activateCamera(SurfaceHolder holder) {
 		if (camera != null) {
 			deactivateCamera();
 		}
 		try {
 			camera = Camera.open();
-			SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-			SurfaceHolder holder = surface.getHolder();
+			if (holder == null) {
+				SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
+				holder = surface.getHolder();
+			}
 			camera.setPreviewDisplay(holder);
 			camera.setDisplayOrientation(90);
-			camera.startPreview();			
 			camera.autoFocus(autoFocusCallback);
+			Parameters params = camera.getParameters();
+			params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+			params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+			camera.setParameters(params);
+			camera.startPreview();						
 		} catch (IOException e) {
 			Log.d("Arkiv", e.getMessage());
+			deactivateCamera();
 		}
 	}
 	
@@ -257,7 +266,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
-		activateCamera();
+		activateCamera(holder);
 	}
 	
 	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {

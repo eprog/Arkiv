@@ -34,6 +34,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
+	private static final int SELECT_PROGRAM = 0;
 	private static final int SELECT_FROM_ARCHIVE = 1;
 	private Camera camera = null;
 	private String folder = null;
@@ -150,7 +151,23 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode != RESULT_OK) return;
+		if (resultCode != RESULT_OK) {
+			// Operation was cancelled, reactivate camera if needed
+			if (camera == null) {
+				try {
+					camera = Camera.open();
+					SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
+			        SurfaceHolder holder = surface.getHolder();
+					camera.setPreviewDisplay(holder);
+					camera.setDisplayOrientation(90);
+					camera.startPreview();			
+					camera.autoFocus(autoFocusCallback);
+				} catch (IOException e) {
+					Log.d("Arkiv", e.getMessage());
+				}
+			}
+			return;
+		}
 		 
         Bitmap bitmap   = null;
         String path     = "";
@@ -261,7 +278,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	
 	private void sendMail(String type, String folder, String filename) {
 		// Check if mail shall be sent
-//		SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		Boolean sendMail = settings.getBoolean("PREF_SEND_MAIL", false);
 		String emailAddress = settings.getString("PREF_EMAIL_ADDRESS", null);
 		if (!sendMail || emailAddress == null) {
@@ -277,7 +293,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 				new String[] { emailAddress }); 
 		sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
 		sendIntent.setType("plain/txt");
-		startActivity(Intent.createChooser(sendIntent, getResources().getString(R.string.chooserTitle))); 
+		startActivityForResult(Intent.createChooser(sendIntent, getResources().getString(R.string.chooserTitle)), SELECT_PROGRAM);
 	}
 	
 

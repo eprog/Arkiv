@@ -63,17 +63,18 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         createFolder("/sdcard/Arkiv/Kvitto");
         createFolder("/sdcard/Arkiv/Faktura");
         createFolder("/sdcard/Arkiv/Other");
+        
+        SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
+        SurfaceHolder holder = surface.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        holder.setFixedSize(300, 200);
     }
     
     @Override
 	protected void onPause() {
 		super.onPause();
-		
-		if (camera != null) {
-			camera.stopPreview();
-			camera.release();
-			camera = null;
-		}
+		deactivateCamera();
 	}
 
 	@Override
@@ -97,12 +98,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 //		} else {
 //			setContentView(R.layout.main2);
 //		}
-		
-		SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-        SurfaceHolder holder = surface.getHolder();
-        holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        holder.setFixedSize(300, 200);
 	}
 
 	private void createFolder(String path) {
@@ -153,19 +148,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode != RESULT_OK) {
 			// Operation was cancelled, reactivate camera if needed
-			if (camera == null) {
-				try {
-					camera = Camera.open();
-					SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-			        SurfaceHolder holder = surface.getHolder();
-					camera.setPreviewDisplay(holder);
-					camera.setDisplayOrientation(90);
-					camera.startPreview();			
-					camera.autoFocus(autoFocusCallback);
-				} catch (IOException e) {
-					Log.d("Arkiv", e.getMessage());
-				}
-			}
+			activateCamera();
 			return;
 		}
 		 
@@ -197,6 +180,31 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
+	
+	private void activateCamera() {
+		if (camera != null) {
+			deactivateCamera();
+		}
+		try {
+			camera = Camera.open();
+			SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
+			SurfaceHolder holder = surface.getHolder();
+			camera.setPreviewDisplay(holder);
+			camera.setDisplayOrientation(90);
+			camera.startPreview();			
+			camera.autoFocus(autoFocusCallback);
+		} catch (IOException e) {
+			Log.d("Arkiv", e.getMessage());
+		}
+	}
+	
+	private void deactivateCamera() {
+		if (camera != null) {
+			camera.stopPreview();
+			camera.release();
+			camera = null;
+		}
+	}
 
 	private void takePicture(String folder) {		
 		this.folder = folder;
@@ -208,7 +216,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	
 	ShutterCallback shutterCallback = new ShutterCallback() {
 		public void onShutter() {
-			// TODO Do something?
 		}
 	};
 	
@@ -250,15 +257,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
-		try {
-			camera = Camera.open();
-			camera.setPreviewDisplay(holder);
-			camera.setDisplayOrientation(90);
-			camera.startPreview();			
-			camera.autoFocus(autoFocusCallback);
-		} catch (IOException e) {
-			Log.d("Arkiv", e.getMessage());
-		}
+		activateCamera();
 	}
 	
 	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
@@ -269,11 +268,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	};
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
-		if (camera != null) {
-			camera.stopPreview();
-			camera.release();
-			camera = null;
-		}
+		deactivateCamera();
 	}
 	
 	private void sendMail(String type, String folder, String filename) {

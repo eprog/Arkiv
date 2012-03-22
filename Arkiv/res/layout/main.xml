@@ -17,8 +17,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
-            	android:text="@string/buttonIntyg" />
-
+            	android:text="@string/buttonIntyg" />
 			<Button
 			    android:id="@+id/buttonLedighet"
 			    android:layout_width="0dip"

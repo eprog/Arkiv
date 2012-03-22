@@ -14,7 +14,7 @@
             android:key="PREF_STATUS_BAR" 
             android:title="@string/preferenceStatusBar" 
             android:defaultValue="true" />
-        <!--  
+        <!-- Hard to have scale the surface view if it shall be on top! 
         <CheckBoxPreference
             android:key="PREF_BUTTONS_ON_TOP" 
             android:title="@string/preferenceButtonsOnTop"

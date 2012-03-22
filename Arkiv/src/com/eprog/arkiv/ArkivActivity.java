@@ -42,6 +42,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	private Uri selectedImageUri;
 	private ImageView imageView;
 	private SharedPreferences settings;
+	private SurfaceHolder holder = null;
 	
     /** Called when the activity is first created. */
     @Override
@@ -63,10 +64,10 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         createFolder("/sdcard/Arkiv/Ledighet");
         createFolder("/sdcard/Arkiv/Kvitto");
         createFolder("/sdcard/Arkiv/Faktura");
-        createFolder("/sdcard/Arkiv/Other");
+        createFolder("/sdcard/Arkiv/Other");        
         
-        SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-        SurfaceHolder holder = surface.getHolder();
+		SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
+		holder = surface.getHolder();
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         holder.setFixedSize(300, 200);
@@ -99,7 +100,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 //		} else {
 //			setContentView(R.layout.main2);
 //		}
-		
 	}
 
 	private void createFolder(String path) {
@@ -150,7 +150,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (resultCode != RESULT_OK) {
 			// Operation was cancelled, reactivate camera if needed
-			activateCamera(null);
+			activateCamera(holder);
 			return;
 		}
 		 
@@ -184,15 +184,12 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
     }
 	
 	private void activateCamera(SurfaceHolder holder) {
+		Log.d("Arkiv", "activateCamera() camera = " + camera);
 		if (camera != null) {
 			deactivateCamera();
 		}
 		try {
 			camera = Camera.open();
-			if (holder == null) {
-				SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-				holder = surface.getHolder();
-			}
 			camera.setPreviewDisplay(holder);
 			camera.setDisplayOrientation(90);
 			camera.autoFocus(autoFocusCallback);
@@ -266,6 +263,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
+		Log.d("Arkiv", "surfaceCreated()");
 		activateCamera(holder);
 	}
 	
@@ -277,6 +275,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	};
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
+		Log.d("Arkiv", "surfaceDestroyed()");
 		deactivateCamera();
 	}
 	

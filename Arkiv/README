@@ -3,7 +3,7 @@ The purpose with Arkiv is to make it easy to save electronic copies of important
 papers, such as invoices, receipt etc.
 
 When starting the app, the user can point the camera to the item who needs to be saved 
-and the pressing on of the buttons on thr screen to specify the type of the item.
+and the pressing on of the buttons on the screen to specify the type of the item.
 Then a picture is taken and stored on the SD card in the folder "Arkiv/<type>"
 with the filename <type><date and time>.jpg
 
@@ -12,6 +12,6 @@ from the chooser pop-up the mail can be sent.
 Then the item is stored in that mail account.
 
 The Arkiv app is build for Android 2.3 and tested on Sony Ericsson X10 Mini running 
-Android 2.3.7 (CM7) and Android 4.0.3 (CM9).
+Android 2.3.7 (CM7) and Android 4.0.3 (CM9), and Sony Ericsson Arc running Android 2.3.4 (Stock).
 
 If you have any questions about this app you can contact the developer at eproginc@gmail.com.

@@ -28,5 +28,6 @@
     <string name="settingsTitle">Inställningar</string>
     <string name="chooserTitle">Välj program</string>
     <string name="noFocus">Kameran kunde ej fokusera!</string>
+    <string name="sendTitle">Välj kategori för din bild.</string>
 
 </resources>

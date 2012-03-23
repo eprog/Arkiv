@@ -14,6 +14,6 @@ Known issues:
    
 3. The Arkiv button opens the Gallery app which shows all image folders, not only thos related to this app.
 
-4. When returning from the Gallery the camera preview is not working.
+4. Folder names should be localized or in English.
    
  

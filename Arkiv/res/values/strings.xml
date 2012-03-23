@@ -28,5 +28,6 @@
     <string name="settingsTitle">Preferences</string>
     <string name="chooserTitle">Choose program</string>
     <string name="noFocus">Unable to focus camera!</string>
+    <string name="sendTitle">Select category for your image.</string>
 
 </resources>

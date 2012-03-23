@@ -110,11 +110,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         {
             success = folder.mkdirs();
         }         
-        if (!success) 
-        { 
-            Log.d("createFolder", "Folders could not be created");
-        }
-        
     }
     
     public void clickHandler(View view) {

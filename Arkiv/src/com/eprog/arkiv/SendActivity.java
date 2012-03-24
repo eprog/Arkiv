@@ -1,9 +1,17 @@
 package com.eprog.arkiv;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -35,22 +43,8 @@ public class SendActivity extends Activity {
             {
                 try
                 {
-                    // Get resource path from intent callee
+                    // Get resource path from intent 
                     uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
-
-//                    // Query gallery for camera picture via
-//                    // Android ContentResolver interface
-//                    ContentResolver cr = getContentResolver();
-//                    InputStream is = cr.openInputStream(uri);
-//                    // Get binary bytes for encode
-//                    byte[] data = getBytesFromFile(is);
-//
-//                    // base 64 encode for text transmission (HTTP)
-//                    byte[] encoded_data = Base64.encodeBase64(data);
-//                    String data_string = new String(encoded_data); // convert to string
-//
-//                    SendRequest(data_string);
-
                     return;
                 } catch (Exception e)
                 {
@@ -74,50 +68,73 @@ public class SendActivity extends Activity {
     public void clickHandler(View view) {
 		switch (view.getId()) {
 		case R.id.buttonIntyg:
-			sendMail("Intyg", "Intyg");
+			copyAndSendMail("Intyg", "Intyg");
 			break;
 		case R.id.buttonLedighet:
-			sendMail("Ledighet", "Ledighet");
+			copyAndSendMail("Ledighet", "Ledighet");
 			break;
 
 		case R.id.buttonKvitto:
-			sendMail("Kvitto", "Kvitto");
+			copyAndSendMail("Kvitto", "Kvitto");
 			break;
 
 		case R.id.buttonFaktura:
-			sendMail("Faktura", "Faktura");
+			copyAndSendMail("Faktura", "Faktura");
 			break;
 
 		case R.id.buttonOther:
-			sendMail("Other", "Other");
+			copyAndSendMail("Other", "Other");
 			break;
 
-//		case R.id.buttonLog:
-//	        Intent intent = new Intent();
-//            intent.setType("image/*");
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
-//            startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.chooserTitle)), SELECT_FROM_ARCHIVE);
-//			break;
 		}
+		finish();
     }
 
-    private void sendMail(String type, String folder) {
+    private void copyAndSendMail(String type, String folder) {
+    	
+    	Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String formattedDate = df.format(c.getTime());
+		String dirPath = "/sdcard/Arkiv/" + folder;
+        String filename = folder + formattedDate + ".jpg";
+        
+    	// Copy image to archive folder
+    	// Query gallery for camera picture via
+    	// Android ContentResolver interface
+    	ContentResolver cr = getContentResolver();
+    	InputStream is = null;
+		try {
+			is = cr.openInputStream(uri);
+		} catch (FileNotFoundException e1) {
+			Log.d("Arkiv", e1.toString());
+		}
+    	// Get binary bytes for encode
+    	byte[] data = null;
+		try {
+			data = getBytesFromFile(is);
+		} catch (IOException e1) {
+			Log.d("Arkiv", e1.toString());
+		}
+    	
+    	// Save the image to the right folder on the SD card
+    	FileOutputStream outStream = null;
+    	try {
+    		outStream = new FileOutputStream(dirPath + "/" + filename);
+    		outStream.write(data);
+    		outStream.close();
+    	} catch (FileNotFoundException e) {
+    		Log.d("Arkiv", e.getMessage());
+    	} catch (IOException e) {
+    		Log.d("Arkiv", e.getMessage());
+    	}
+    	
 		// Check if mail shall be sent
 		Boolean sendMail = settings.getBoolean("PREF_SEND_MAIL", false);
 		String emailAddress = settings.getString("PREF_EMAIL_ADDRESS", null);
 		if (!sendMail || emailAddress == null) {
 			return;
 		}
-		
-		Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String formattedDate = df.format(c.getTime());
-        
-		String dirPath = "/sdcard/Arkiv/" + folder;
-        String filename = folder + formattedDate + ".jpg";
 				
-		//Uri uri = Uri.fromFile(new File(folder, filename));
-		
 		Intent sendIntent = new Intent(Intent.ACTION_SEND);
 		sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.emailBody));
 		sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
@@ -127,5 +144,32 @@ public class SendActivity extends Activity {
 		sendIntent.setType("plain/txt");
 		startActivityForResult(Intent.createChooser(sendIntent, getResources().getString(R.string.chooserTitle)), SELECT_PROGRAM);
 	}
+
+    private static byte[] getBytesFromFile(InputStream ios) throws IOException {
+    	ByteArrayOutputStream ous = null;
+
+    	try {
+    		byte[] buffer = new byte[4096];
+    		ous = new ByteArrayOutputStream();
+    		int read = 0;
+    		while ((read = ios.read(buffer)) != -1) {
+    			ous.write(buffer, 0, read);
+    		}
+    	} finally {
+    		try {
+    			if (ous != null)
+    				ous.close();
+    		} catch (IOException e) {
+    			// swallow, since not that important
+    		}
+    		try {
+    			if (ios != null)
+    				ios.close();
+    		} catch (IOException e) {
+    			// swallow, since not that important
+    		}
+    	}
+    	return ous.toByteArray();
+    }
 
 }

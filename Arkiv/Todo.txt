@@ -12,8 +12,10 @@ Known issues:
 2. Email is not sent directly because Google don't allow it for security reasons.
    To support this "sendmail" needs to be implemented in the App. Not worth it!
    
-3. The Arkiv button opens the Gallery app which shows all image folders, not only thos related to this app.
+3. The Arkiv button opens the Gallery app which shows all image folders, not only those related to this app.
 
 4. Folder names should be localized or in English.
+
+5. Make folder icons for category buttons. 9-path?
    
  

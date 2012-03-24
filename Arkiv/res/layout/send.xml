@@ -81,14 +81,14 @@
                 android:onClick="clickHandler"
                 android:text="@string/buttonOther" />
 
-            <Button
+           <!--  <Button
                 android:id="@+id/buttonLog"
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
                 android:text="@string/buttonLog" />
-
+ -->
         </TableRow>
 <!--         <TableRow
             android:id="@+id/tableRow4"

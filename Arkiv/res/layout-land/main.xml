@@ -16,6 +16,7 @@
             	android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:background="@drawable/folder66"
                 android:onClick="clickHandler"
             	android:text="@string/buttonIntyg" />
 
@@ -24,6 +25,7 @@
 			    android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:background="@drawable/folder66"
                 android:onClick="clickHandler"
 			    android:text="@string/buttonLedighet" />
 			
@@ -32,6 +34,7 @@
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:background="@drawable/folder66"
                 android:onClick="clickHandler"
                 android:text="@string/buttonKvitto" />
 
@@ -48,6 +51,7 @@
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:background="@drawable/folder66"
                 android:onClick="clickHandler"
                 android:text="@string/buttonFaktura" />
 
@@ -56,6 +60,7 @@
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:background="@drawable/folder66"
                 android:onClick="clickHandler"
                 android:text="@string/buttonOther" />
 
@@ -64,6 +69,7 @@
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
+                android:background="@drawable/archive66"
                 android:onClick="clickHandler"
                 android:text="@string/buttonLog" />
 

@@ -9,6 +9,8 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -23,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -259,6 +262,15 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			} catch (IOException e) {
 				Log.d("onPictureTaken", e.getMessage());
 			}
+			
+			// Insert image into Media Store
+	    	ContentValues content = new ContentValues(1);
+	    	content.put(Images.Media.MIME_TYPE, "image/jpg");
+	    	content.put(MediaStore.Images.Media.DATA, dirPath + "/" + filename);
+	    	
+	    	ContentResolver resolver = getContentResolver();
+	    	Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, content);
+	    	sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
 			
 			sendMail(folder, dirPath, filename);
 			camera.startPreview();

@@ -1,24 +1,31 @@
 package com.eprog.arkiv;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 public class SendActivity extends Activity {
 	private static final int SELECT_PROGRAM = 0;
@@ -45,6 +52,10 @@ public class SendActivity extends Activity {
                 {
                     // Get resource path from intent 
                     uri = (Uri) extras.getParcelable(Intent.EXTRA_STREAM);
+                    
+                    // TODO show image in the ImageView
+                    //ImageView imageView = (ImageView)findViewById(R.id.sendImageView);
+                    
                     return;
                 } catch (Exception e)
                 {
@@ -53,6 +64,11 @@ public class SendActivity extends Activity {
 
             } 
         }
+	}
+
+	private void setImageURI(Uri uri2) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -99,8 +115,6 @@ public class SendActivity extends Activity {
         String filename = folder + formattedDate + ".jpg";
         
     	// Copy image to archive folder
-    	// Query gallery for camera picture via
-    	// Android ContentResolver interface
     	ContentResolver cr = getContentResolver();
     	InputStream is = null;
 		try {
@@ -127,6 +141,15 @@ public class SendActivity extends Activity {
     	} catch (IOException e) {
     		Log.d("Arkiv", e.getMessage());
     	}
+    	
+    	// Insert image into Media Store
+    	ContentValues content = new ContentValues(1);
+    	content.put(Images.Media.MIME_TYPE, "image/jpg");
+    	content.put(MediaStore.Images.Media.DATA, dirPath + "/" + filename);
+    	
+    	ContentResolver resolver = getContentResolver();
+    	Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, content);
+    	sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
     	
 		// Check if mail shall be sent
 		Boolean sendMail = settings.getBoolean("PREF_SEND_MAIL", false);

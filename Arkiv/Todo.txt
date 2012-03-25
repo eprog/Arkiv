@@ -16,6 +16,5 @@ Known issues:
 
 4. Folder names should be localized or in English.
 
-5. Make folder icons for category buttons. 9-path?
    
  

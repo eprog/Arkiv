@@ -33,7 +33,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-            	android:text="@string/buttonIntyg" />
+            	android:text="@string/buttonIntyg" 
+            	android:textColor="#000000" />
 			<Button
 			    android:id="@+id/buttonLedighet"
 			    android:layout_width="0dip"
@@ -41,7 +42,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-			    android:text="@string/buttonLedighet" />
+			    android:text="@string/buttonLedighet" 
+			    android:textColor="#000000" />
 
         </TableRow>
 
@@ -58,7 +60,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonKvitto" />
+                android:text="@string/buttonKvitto" 
+                android:textColor="#000000" />
 
             <Button
                 android:id="@+id/buttonFaktura"
@@ -67,7 +70,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonFaktura" />
+                android:text="@string/buttonFaktura" 
+                android:textColor="#000000" />
 
         </TableRow>
 
@@ -84,7 +88,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonOther" />
+                android:text="@string/buttonOther" 
+                android:textColor="#000000" />
 
            <!--  <Button
                 android:id="@+id/buttonLog"

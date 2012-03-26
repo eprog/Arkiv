@@ -75,7 +75,9 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="@drawable/archive66"
-                android:onClick="clickHandler" />
+                android:onClick="clickHandler"
+                android:text="@string/buttonLog"
+                android:textColor="#000000"  />
 
         </TableRow>
         <TableRow

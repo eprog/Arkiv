@@ -29,5 +29,8 @@
     <string name="chooserTitle">Choose program</string>
     <string name="noFocus">Unable to focus camera!</string>
     <string name="sendTitle">Select category for your image.</string>
+    <string name="subCategoryTitle">Subcategory</string>
+    <string name="subCategoryText">Select a subcategory or specify a new.</string>
+    <string name="addSubCategoryText">New subcategory</string>
 
 </resources>

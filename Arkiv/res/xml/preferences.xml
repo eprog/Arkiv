@@ -21,12 +21,10 @@
         	android:defaultValue="true" />
         -->
     </PreferenceCategory>
-    <!-- 
     <PreferenceCategory android:title="@string/preferenceCategoryCategories">
         <CheckBoxPreference
-            android:key="PREF_USE_SUBCATEGORIES" 
+            android:key="PREF_SUB_CATEGORIES" 
             android:title="@string/preferenceSubCategories" 
             android:defaultValue="false" />
     </PreferenceCategory>
-    -->
 </PreferenceScreen>

@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -25,7 +26,11 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 public class SendActivity extends Activity {
 	private static final int SELECT_PROGRAM = 0;
@@ -107,6 +112,12 @@ public class SendActivity extends Activity {
     }
 
     private void copyAndSendMail(String type, String folder) {
+    	
+    	// Check if subcategory dialog shall be shown
+    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
+    	if (subCategories) {
+    		showSubCategoryDialog();
+    	}
     	
     	Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -194,5 +205,40 @@ public class SendActivity extends Activity {
     	}
     	return ous.toByteArray();
     }
+    
+    private void showSubCategoryDialog() {
+		AlertDialog dialog = new AlertDialog.Builder(this).create();
+		dialog.setContentView(R.layout.subcategory);
+		Window w = dialog.getWindow();
+		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+		dialog.setTitle(R.string.subCategoryTitle);
+		
+		TextView text = (TextView)findViewById(R.id.subCategoryDescription);
+		text.setText(R.string.subCategoryText);
+		
+		Spinner spin_category = (Spinner) findViewById(R.id.subCategorySpinner);
+//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.subcategory, );
+//		adapter_type.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//		spin_type.setAdapter(adapter_type);
+//
+//		spin_type.setOnItemSelectedListener(new OnItemSelectedListener(){
+//			public void onItemSelected(AdapterView<?> arg0, View arg1,
+//					int arg2, long arg3) {
+//				spin_type.setSelection(adapter_type.getPosition(Signin.VALUE_type[selected_position]));
+//
+//				@Override
+//				public void onNothingSelected(AdapterView<?> arg0) {
+//				}
+//			});
+		
+//		dialog.setButton("OK", new OnClickListener() {
+//			
+//			public void onClick(DialogInterface dialog, int which) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+		dialog.show();
+	}
 
 }

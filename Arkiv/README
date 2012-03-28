@@ -11,7 +11,10 @@ If an email address is specified a mail is created and by selecting a mail appli
 from the chooser pop-up the mail can be sent.
 Then the item is stored in that mail account.
 
-The Arkiv app is build for Android 2.3 and tested on Sony Ericsson X10 Mini running 
-Android 2.3.7 (CM7) and Android 4.0.3 (CM9), and Sony Ericsson Arc running Android 2.3.4 (Stock).
+The Arkiv app is build for Android 2.3 and tested on the following devices:
+- Sony Ericsson X10 Mini running Android 2.3.7 (CM7) and Android 4.0.3 (CM9)
+- Sony Ericsson Mini running Android 2.3.4 (Stock).
+- Sony Ericsson Arc running Android 2.3.4 (Stock).
+- Samsung Galaxy S2 running Android.2.3.3 (Stock).
 
 If you have any questions about this app you can contact the developer at eproginc@gmail.com.

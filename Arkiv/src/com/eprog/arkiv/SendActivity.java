@@ -14,8 +14,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -24,18 +27,28 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
+import android.text.Editable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+
 public class SendActivity extends Activity {
+	
 	private static final int SELECT_PROGRAM = 0;
 	private SharedPreferences settings;
 	private Uri uri = null;
+	private String dirPath = null;
+	private String filename = null;
+	private String folder = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,38 +100,58 @@ public class SendActivity extends Activity {
 	}
 	
     public void clickHandler(View view) {
+    	// Check if subcategory dialog shall be shown
+    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
+  
 		switch (view.getId()) {
 		case R.id.buttonIntyg:
-			copyAndSendMail("Intyg", "Intyg");
+			if (subCategories) {
+				folder = "Intyg";
+	    		showSubCategoryDialog(); 
+			} else {
+				copyAndSendMail("Intyg", "Intyg");
+			}
 			break;
 		case R.id.buttonLedighet:
-			copyAndSendMail("Ledighet", "Ledighet");
+			if (subCategories) {
+				folder = "Ledighet";
+	    		showSubCategoryDialog(); 
+			} else {
+				copyAndSendMail("Ledighet", "Ledighet");
+			}
 			break;
 
 		case R.id.buttonKvitto:
-			copyAndSendMail("Kvitto", "Kvitto");
+			if (subCategories) {
+				folder = "Kvitto";
+	    		showSubCategoryDialog(); 
+			} else {
+				copyAndSendMail("Kvitto", "Kvitto");
+			}
 			break;
 
 		case R.id.buttonFaktura:
-			copyAndSendMail("Faktura", "Faktura");
+			if (subCategories) {
+				folder = "Faktura";
+	    		showSubCategoryDialog(); 
+			} else {
+				copyAndSendMail("Faktura", "Faktura");
+			}
 			break;
 
 		case R.id.buttonOther:
-			copyAndSendMail("Other", "Other");
+			if (subCategories) {
+				folder = "Other";
+	    		showSubCategoryDialog(); 
+			} else {
+				copyAndSendMail("Other", "Other");
+			}
 			break;
 
 		}
-		finish();
     }
 
     private void copyAndSendMail(String type, String folder) {
-    	
-    	// Check if subcategory dialog shall be shown
-    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
-    	if (subCategories) {
-    		showSubCategoryDialog();
-    	}
-    	
     	Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String formattedDate = df.format(c.getTime());
@@ -168,15 +201,23 @@ public class SendActivity extends Activity {
 		if (!sendMail || emailAddress == null) {
 			return;
 		}
+		
+		// Get sub-category
+        String sub = settings.getString(Settings.PREF_SELCETED_SUB_CATEGORY, "");
 				
 		Intent sendIntent = new Intent(Intent.ACTION_SEND);
 		sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.emailBody));
-		sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
+		if (sub != null && !sub.equals("")) {
+			sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] [" + sub + "] " + filename);
+		} else {
+			sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
+		}
 		sendIntent.putExtra(Intent.EXTRA_EMAIL,
 				new String[] { emailAddress }); 
 		sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
 		sendIntent.setType("plain/txt");
 		startActivityForResult(Intent.createChooser(sendIntent, getResources().getString(R.string.chooserTitle)), SELECT_PROGRAM);
+		finish();
 	}
 
     private static byte[] getBytesFromFile(InputStream ios) throws IOException {
@@ -206,39 +247,55 @@ public class SendActivity extends Activity {
     	return ous.toByteArray();
     }
     
-    private void showSubCategoryDialog() {
-		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setContentView(R.layout.subcategory);
+    private View dialoglayout = null;
+	
+	private void showSubCategoryDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.subCategoryTitle);
+		LayoutInflater inflater = getLayoutInflater();
+		dialoglayout = inflater.inflate(R.layout.subcategory, (ViewGroup) getCurrentFocus());
+		builder.setView(dialoglayout);
+		AlertDialog dialog = builder.create();
 		Window w = dialog.getWindow();
 		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-		dialog.setTitle(R.string.subCategoryTitle);
 		
-		TextView text = (TextView)findViewById(R.id.subCategoryDescription);
+		TextView text = (TextView)dialoglayout.findViewById(R.id.subCategoryDescription);
 		text.setText(R.string.subCategoryText);
 		
-		Spinner spin_category = (Spinner) findViewById(R.id.subCategorySpinner);
-//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.subcategory, );
-//		adapter_type.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		spin_type.setAdapter(adapter_type);
-//
-//		spin_type.setOnItemSelectedListener(new OnItemSelectedListener(){
-//			public void onItemSelected(AdapterView<?> arg0, View arg1,
-//					int arg2, long arg3) {
-//				spin_type.setSelection(adapter_type.getPosition(Signin.VALUE_type[selected_position]));
-//
-//				@Override
-//				public void onNothingSelected(AdapterView<?> arg0) {
-//				}
-//			});
+		Spinner spinCategory = (Spinner) dialoglayout.findViewById(R.id.subCategorySpinner);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		int count = settings.getInt(Settings.PREF_CATEGORY1_SUB_COUNT, 0);
+		for (int i = 0; i < count; i++) {
+			adapter.add(settings.getString(Settings.PREF_CATEGORY1_SUB + i, ""));
+		}
+		spinCategory.setAdapter(adapter);
 		
-//		dialog.setButton("OK", new OnClickListener() {
-//			
-//			public void onClick(DialogInterface dialog, int which) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-		dialog.show();
+		builder.setPositiveButton("OK", new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				Editor editor = settings.edit();
+				// Get sub-category
+				EditText text = (EditText)dialoglayout.findViewById(R.id.editSubCategory);
+				Editable newCategory = text.getText();
+				
+				if (newCategory.length() > 0) {
+					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, newCategory.toString());
+					// Save new category
+					int count = settings.getInt(Settings.PREF_CATEGORY1_SUB_COUNT, 0);
+					editor.putString(Settings.PREF_CATEGORY1_SUB + count, newCategory.toString());
+					editor.putInt(Settings.PREF_CATEGORY1_SUB_COUNT, count + 1);
+				} else {
+					Spinner spinCategory = (Spinner) dialoglayout.findViewById(R.id.subCategorySpinner);
+					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, (String) spinCategory.getSelectedItem());
+				}
+				editor.commit();
+				copyAndSendMail(folder, folder);
+//				sendMail(folder, dirPath, filename);
+//	    		camera.startPreview();  // TODO Is this needed?
+			}
+		});
+		
+		builder.show();
 	}
-
 }

@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -28,15 +29,20 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
+import android.text.Editable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,10 +53,14 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	private static final int SELECT_FROM_ARCHIVE = 1;
 	private Camera camera = null;
 	private String folder = null;
+	private String dirPath = null;
+	private String filename = null;
 	private Uri selectedImageUri;
 	private ImageView imageView;
 	private SharedPreferences settings;
+	SurfaceView surface = null;
 	private SurfaceHolder holder = null;
+	
 	
     /** Called when the activity is first created. */
     @Override
@@ -74,21 +84,25 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         createFolder("/sdcard/Arkiv/Faktura");
         createFolder("/sdcard/Arkiv/Other");        
         
-		SurfaceView surface = (SurfaceView)findViewById(R.id.surface);
-		holder = surface.getHolder();
-        holder.addCallback(this);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        holder.setFixedSize(300, 200);
+//		surface = (SurfaceView)findViewById(R.id.surface);
+//		holder = surface.getHolder();
+//        holder.addCallback(this);
+//        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+//        holder.setFixedSize(300, 200);
     }
     
     @Override
 	protected void onPause() {
+    	Log.d("Arkiv", "onPause()");
 		super.onPause();
 		deactivateCamera();
+		holder.removeCallback(this);
+		surface = null;
 	}
 
 	@Override
 	protected void onResume() {
+		Log.d("Arkiv", "onResume()");
 		super.onResume();
 		
 		Boolean statusbar = settings.getBoolean("PREF_STATUS_BAR", true);
@@ -102,6 +116,12 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	        getWindow().setAttributes(attrs);
 		}
 		
+		surface = (SurfaceView)findViewById(R.id.surface);
+		holder = surface.getHolder();
+        holder.addCallback(this);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        holder.setFixedSize(300, 200);
+		
 //		Boolean onTop = settings.getBoolean("PREF_BUTTONS_ON_TOP", true);
 //		if (onTop) {
 //			setContentView(R.layout.main);
@@ -109,6 +129,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 //			setContentView(R.layout.main2);
 //		}
 	}
+
 
 	private void createFolder(String path) {
     	File folder = new File(path);
@@ -137,7 +158,8 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			break;
 
 		case R.id.buttonOther:
-			takePicture("Other");
+			//takePicture("Other");
+			showSubCategoryDialog();  // TODO Remove this after testing
 			break;
 
 		case R.id.buttonLog:
@@ -216,22 +238,28 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 	private void takePicture(String folder) {		
+		Log.d("Arkiv", "takePicture()");
 		this.folder = folder;
 	
 		if (camera != null) {
-			camera.autoFocus(new AutoFocusCallback() {
-				
-				public void onAutoFocus(boolean success, Camera camera) {
-					if (success) {
-						camera.takePicture(shutterCallback, rawCallback, jpegCallback);
-					} else {
-						// Inform user that the camera could not focus.
-						Toast toast = Toast.makeText(getApplicationContext(), R.string.noFocus, Toast.LENGTH_SHORT);
-						toast.show();
+			int sdk = android.os.Build.VERSION.SDK_INT;
+			if (sdk > 10) {
+				camera.takePicture(shutterCallback, rawCallback, jpegCallback);  // TODO Remove this special case when AutoFocus works on X10 mini with ICS. 
+			} else {
+				camera.autoFocus(new AutoFocusCallback() {
+
+					public void onAutoFocus(boolean success, Camera camera) {
+						Log.d("Arkiv", "onAutoFocus()");
+						if (success) {
+							camera.takePicture(shutterCallback, rawCallback, jpegCallback);
+						} else {
+							// Inform user that the camera could not focus.
+							Toast toast = Toast.makeText(getApplicationContext(), R.string.noFocus, Toast.LENGTH_SHORT);
+							toast.show();
+						}
 					}
-				}
-			});
-			
+				});
+			}
 		}
 	}
 	
@@ -249,18 +277,12 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	PictureCallback jpegCallback = new PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
 			
-			// Check if subcategory dialog shall be shown
-			Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
-			if (subCategories) {
-				showSubCategoryDialog();
-			}
-			
 			Calendar c = Calendar.getInstance();
 	        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	        String formattedDate = df.format(c.getTime());
 	        
-			String dirPath = "/sdcard/Arkiv/" + folder;
-	        String filename = folder + formattedDate + ".jpg";
+			dirPath = "/sdcard/Arkiv/" + folder;
+	        filename = folder + formattedDate + ".jpg";
 			
 	        // Save the image to the right folder on the SD card
 			FileOutputStream outStream = null;
@@ -283,14 +305,19 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	    	Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, content);
 	    	sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
 			
-			sendMail(folder, dirPath, filename);
-			camera.startPreview();
+	    	// Check if subcategory dialog shall be shown
+	    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
+	    	if (subCategories) {
+	    		showSubCategoryDialog();
+	    	} else {
+	    		sendMail(folder, dirPath, filename);
+	    		camera.startPreview();  // TODO Is this needed?
+	    	}
 		}
 	};
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 			int height) {
-		// TODO Auto-generated method stub
-		
+		Log.d("Arkiv", "surfaceChanged()");
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
@@ -317,12 +344,19 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		if (!sendMail || emailAddress == null) {
 			return;
 		}
+		
+        // Get sub-category
+        String sub = settings.getString(Settings.PREF_SELCETED_SUB_CATEGORY, "");
 				
 		Uri uri = Uri.fromFile(new File(folder, filename));
 		
 		Intent sendIntent = new Intent(Intent.ACTION_SEND);
 		sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.emailBody));
-		sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
+		if (sub != null && !sub.equals("")) {
+			sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] [" + sub + "] " + filename);
+		} else {
+			sendIntent.putExtra(Intent.EXTRA_SUBJECT, "[" + type + "] " + filename);
+		}
 		sendIntent.putExtra(Intent.EXTRA_EMAIL,
 				new String[] { emailAddress }); 
 		sendIntent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -373,39 +407,56 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		return true;
 	}
 	
+	private View dialoglayout = null;
+	
 	private void showSubCategoryDialog() {
-		AlertDialog dialog = new AlertDialog.Builder(this).create();
-		dialog.setContentView(R.layout.subcategory);
+	
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.subCategoryTitle);
+		LayoutInflater inflater = getLayoutInflater();
+		dialoglayout = inflater.inflate(R.layout.subcategory, (ViewGroup) getCurrentFocus());
+		builder.setView(dialoglayout);
+		AlertDialog dialog = builder.create();
 		Window w = dialog.getWindow();
 		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-		dialog.setTitle(R.string.subCategoryTitle);
 		
-		TextView text = (TextView)findViewById(R.id.subCategoryDescription);
+		TextView text = (TextView)dialoglayout.findViewById(R.id.subCategoryDescription);
 		text.setText(R.string.subCategoryText);
 		
-		Spinner spin_category = (Spinner) findViewById(R.id.subCategorySpinner);
-//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,R.layout.subcategory, );
-//		adapter_type.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//		spin_type.setAdapter(adapter_type);
-//
-//		spin_type.setOnItemSelectedListener(new OnItemSelectedListener(){
-//			public void onItemSelected(AdapterView<?> arg0, View arg1,
-//					int arg2, long arg3) {
-//				spin_type.setSelection(adapter_type.getPosition(Signin.VALUE_type[selected_position]));
-//
-//				@Override
-//				public void onNothingSelected(AdapterView<?> arg0) {
-//				}
-//			});
+		Spinner spinCategory = (Spinner) dialoglayout.findViewById(R.id.subCategorySpinner);
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		int count = settings.getInt(Settings.PREF_CATEGORY1_SUB_COUNT, 0);
+		for (int i = 0; i < count; i++) {
+			adapter.add(settings.getString(Settings.PREF_CATEGORY1_SUB + i, ""));
+		}
+		spinCategory.setAdapter(adapter);
 		
-//		dialog.setButton("OK", new OnClickListener() {
-//			
-//			public void onClick(DialogInterface dialog, int which) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-		dialog.show();
+		builder.setPositiveButton("OK", new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				Editor editor = settings.edit();
+				// Get sub-category
+				EditText text = (EditText)dialoglayout.findViewById(R.id.editSubCategory);
+				Editable newCategory = text.getText();
+				
+				if (newCategory.length() > 0) {
+					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, newCategory.toString());
+					// Save new category
+					int count = settings.getInt(Settings.PREF_CATEGORY1_SUB_COUNT, 0);
+					editor.putString(Settings.PREF_CATEGORY1_SUB + count, newCategory.toString());
+					editor.putInt(Settings.PREF_CATEGORY1_SUB_COUNT, count + 1);
+				} else {
+					Spinner spinCategory = (Spinner) dialoglayout.findViewById(R.id.subCategorySpinner);
+					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, (String) spinCategory.getSelectedItem());
+				}
+				editor.commit();
+				sendMail(folder, dirPath, filename);
+	    		camera.startPreview();  // TODO Is this needed?
+			}
+		});
+		
+		builder.show();
 	}
 	
 }

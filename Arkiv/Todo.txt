@@ -1,20 +1,23 @@
 Things left to do:
 
-1. Verify on different mobiles and different Android versions.
-2. Implement own image gallery to only show archived items.
+1. Implement own image gallery to only show archived items.
+
+2. Use OCR (TesserAct) to detect sub-categories [Optional]
+
+3. Edit/Remove sub-categories
 
 Known issues:
 
-1. Camera preview orientation not working correct.
-   Without adjustment the camera preview will be wrong (90 degrees) in Portrait mode.
-   With adjustment the camera preview will be wrong in Landscape mode.
-
-2. Email is not sent directly because Google don't allow it for security reasons.
+1. Email is not sent directly because Google don't allow it for security reasons.
    To support this "sendmail" needs to be implemented in the App. Not worth it!
    
-3. The Arkiv button opens the Gallery app which shows all image folders, not only those related to this app.
+2. The Arkiv button opens the Gallery app which shows all image folders, not only those related to this app.
 
-4. Folder names should be localized or in English.
+3. Folder names should be localized or in English.
+
+4. Camera preview not working after screen off.
+
+5. 
 
    
  

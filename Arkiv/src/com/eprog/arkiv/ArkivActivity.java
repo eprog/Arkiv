@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -31,6 +32,7 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.Editable;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -217,12 +219,17 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		try {
 			camera = Camera.open();
 			camera.setPreviewDisplay(holder);
-			camera.setDisplayOrientation(90);
-//			camera.autoFocus(autoFocusCallback);
+			Display display = ((WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+			int rotation = display.getRotation();
+			if (rotation == 0) {
+				camera.setDisplayOrientation(90);
+			} else {
+				camera.setDisplayOrientation(0);
+			}
 			Parameters params = camera.getParameters();
 			params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-			params.setJpegQuality(80);
+			params.setJpegQuality(60);
 			camera.setParameters(params);
 			camera.startPreview();						
 		} catch (IOException e) {
@@ -327,13 +334,6 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		activateCamera(holder);
 	}
 	
-//	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
-//
-//		public void onAutoFocus(boolean arg0, Camera arg1) {
-//			// TODO Auto-generated method stub
-//		}
-//	};
-
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d("Arkiv", "surfaceDestroyed()");
 		deactivateCamera();

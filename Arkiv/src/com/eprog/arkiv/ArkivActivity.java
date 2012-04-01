@@ -52,9 +52,9 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	private static final int SELECT_PROGRAM = 0;
 	private static final int SELECT_FROM_ARCHIVE = 1;
 	private Camera camera = null;
-	private String folder = null;
-	private String dirPath = null;
-	private String filename = null;
+	private static String folder = null;
+	private static String dirPath = null;
+	private static String filename = null;
 	private Uri selectedImageUri;
 	private ImageView imageView;
 	private SharedPreferences settings;
@@ -98,6 +98,8 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		deactivateCamera();
 		holder.removeCallback(this);
 		surface = null;
+		
+		// TODO Save folder, path and filename, reinitiate them in onResume()
 	}
 
 	@Override
@@ -158,8 +160,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			break;
 
 		case R.id.buttonOther:
-			//takePicture("Other");
-			showSubCategoryDialog();  // TODO Remove this after testing
+			takePicture("Other");
 			break;
 
 		case R.id.buttonLog:
@@ -217,10 +218,11 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			camera = Camera.open();
 			camera.setPreviewDisplay(holder);
 			camera.setDisplayOrientation(90);
-			camera.autoFocus(autoFocusCallback);
+//			camera.autoFocus(autoFocusCallback);
 			Parameters params = camera.getParameters();
 			params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+			params.setJpegQuality(80);
 			camera.setParameters(params);
 			camera.startPreview();						
 		} catch (IOException e) {
@@ -325,12 +327,12 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		activateCamera(holder);
 	}
 	
-	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
-
-		public void onAutoFocus(boolean arg0, Camera arg1) {
-			// TODO Auto-generated method stub
-		}
-	};
+//	AutoFocusCallback autoFocusCallback = new AutoFocusCallback() {
+//
+//		public void onAutoFocus(boolean arg0, Camera arg1) {
+//			// TODO Auto-generated method stub
+//		}
+//	};
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		Log.d("Arkiv", "surfaceDestroyed()");
@@ -338,6 +340,11 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 	
 	private void sendMail(String type, String folder, String filename) {
+		
+		if (filename == null) {
+			Log.d("Arkiv", "sendMail(): filename == null");
+			return;
+		}
 		// Check if mail shall be sent
 		Boolean sendMail = settings.getBoolean("PREF_SEND_MAIL", false);
 		String emailAddress = settings.getString("PREF_EMAIL_ADDRESS", null);

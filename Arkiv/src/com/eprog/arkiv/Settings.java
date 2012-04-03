@@ -25,6 +25,8 @@ public class Settings extends PreferenceActivity {
 	public static final String PREF_CATEGORY5_SUB_COUNT = "SUB_CATEGORY5_COUNT";
 
 	public static final String PREF_SELCETED_SUB_CATEGORY = "SELECTED_SUB_CATEGORY";
+	
+	public static final String PREF_FIRST_START = "FIRST_START";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

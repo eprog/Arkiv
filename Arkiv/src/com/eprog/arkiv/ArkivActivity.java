@@ -80,11 +80,11 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 //		}
 		
         // Create folders
-        createFolder("/sdcard/Arkiv/Intyg");
-        createFolder("/sdcard/Arkiv/Ledighet");
-        createFolder("/sdcard/Arkiv/Kvitto");
-        createFolder("/sdcard/Arkiv/Faktura");
-        createFolder("/sdcard/Arkiv/Other");        
+        createFolder(getResources().getString(R.string.folderIntyg));
+        createFolder(getResources().getString(R.string.folderLedighet));
+        createFolder(getResources().getString(R.string.folderKvitto));
+        createFolder(getResources().getString(R.string.folderFaktura));
+        createFolder(getResources().getString(R.string.folderOther));        
         
 //		surface = (SurfaceView)findViewById(R.id.surface);
 //		holder = surface.getHolder();
@@ -132,6 +132,14 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 //		} else {
 //			setContentView(R.layout.main2);
 //		}
+        
+        // Show help dialog on first start
+        if (settings.getBoolean(Settings.PREF_FIRST_START, true)) {
+        	Editor editor = settings.edit();
+        	editor.putBoolean(Settings.PREF_FIRST_START, false);
+        	editor.commit();
+        	showHelpDialog();
+        }
 	}
 
 
@@ -251,10 +259,10 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		this.folder = folder;
 	
 		if (camera != null) {
-			int sdk = android.os.Build.VERSION.SDK_INT;
-			if (sdk > 10) {
-				camera.takePicture(shutterCallback, rawCallback, jpegCallback);  // TODO Remove this special case when AutoFocus works on X10 mini with ICS. 
-			} else {
+//			int sdk = android.os.Build.VERSION.SDK_INT;
+//			if (sdk > 10) {
+//				camera.takePicture(shutterCallback, rawCallback, jpegCallback);  // TODO Remove this special case when AutoFocus works on X10 mini with ICS. 
+//			} else {
 				camera.autoFocus(new AutoFocusCallback() {
 
 					public void onAutoFocus(boolean success, Camera camera) {
@@ -268,7 +276,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 						}
 					}
 				});
-			}
+//			}
 		}
 	}
 	
@@ -392,12 +400,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			break;
 		case R.id.menuHelp:
 		{
-			AlertDialog helpDialog = new AlertDialog.Builder(this).create();
-			Window w = helpDialog.getWindow();
-			w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-			helpDialog.setTitle(R.string.helpTitle);
-			helpDialog.setMessage(getResources().getText(R.string.helpText));
-			helpDialog.show();
+			showHelpDialog();
 		}
 		break;
 		case R.id.menuAbout:
@@ -412,6 +415,15 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		break;
 		}
 		return true;
+	}
+	
+	private void showHelpDialog() {
+		AlertDialog helpDialog = new AlertDialog.Builder(this).create();
+		Window w = helpDialog.getWindow();
+		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+		helpDialog.setTitle(R.string.helpTitle);
+		helpDialog.setMessage(getResources().getText(R.string.helpText));
+		helpDialog.show();
 	}
 	
 	private View dialoglayout = null;

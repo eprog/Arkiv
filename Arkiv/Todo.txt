@@ -6,18 +6,20 @@ Things left to do:
 
 3. Edit/Remove sub-categories
 
+4. Widget
+
+5. Search in the archive
+
 Known issues:
 
 1. Email is not sent directly because Google don't allow it for security reasons.
    To support this "sendmail" needs to be implemented in the App. Not worth it!
    
-2. The Arkiv button opens the Gallery app which shows all image folders, not only those related to this app.
+2. The Arkiv button opens the Gallery app which shows all image folders, not only those related to this app. (Disabled in 1.0)
 
-3. Folder names should be localized or in English.
+3. Camera preview not working after screen off.
 
-4. Camera preview not working after screen off.
-
-5. 
+4. 
 
    
  

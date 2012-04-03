@@ -101,7 +101,7 @@ public class SendActivity extends Activity {
 	
     public void clickHandler(View view) {
     	// Check if subcategory dialog shall be shown
-    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
+    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", false);
   
 		switch (view.getId()) {
 		case R.id.buttonIntyg:

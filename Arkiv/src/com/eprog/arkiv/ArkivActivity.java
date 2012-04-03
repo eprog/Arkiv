@@ -323,7 +323,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	    	sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
 			
 	    	// Check if subcategory dialog shall be shown
-	    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", true);
+	    	Boolean subCategories = settings.getBoolean("PREF_SUB_CATEGORIES", false);
 	    	if (subCategories) {
 	    		showSubCategoryDialog();
 	    	} else {

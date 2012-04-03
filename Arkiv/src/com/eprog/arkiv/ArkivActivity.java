@@ -54,9 +54,9 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	private static final int SELECT_PROGRAM = 0;
 	private static final int SELECT_FROM_ARCHIVE = 1;
 	private Camera camera = null;
-	private static String folder = null;
-	private static String dirPath = null;
-	private static String filename = null;
+	private String folder = null;
+	private String category = null;
+	private String filename = null;
 	private Uri selectedImageUri;
 	private ImageView imageView;
 	private SharedPreferences settings;
@@ -155,22 +155,22 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
     public void clickHandler(View view) {
 		switch (view.getId()) {
 		case R.id.buttonIntyg:
-			takePicture("Intyg");
+			takePicture(getResources().getString(R.string.folderIntyg), getResources().getString(R.string.buttonIntyg));
 			break;
 		case R.id.buttonLedighet:
-			takePicture("Ledighet");
+			takePicture(getResources().getString(R.string.folderLedighet), getResources().getString(R.string.buttonLedighet));
 			break;
 
 		case R.id.buttonKvitto:
-			takePicture("Kvitto");
+			takePicture(getResources().getString(R.string.folderKvitto), getResources().getString(R.string.buttonKvitto));
 			break;
 
 		case R.id.buttonFaktura:
-			takePicture("Faktura");
+			takePicture(getResources().getString(R.string.folderFaktura), getResources().getString(R.string.buttonFaktura));
 			break;
 
 		case R.id.buttonOther:
-			takePicture("Other");
+			takePicture(getResources().getString(R.string.folderOther), getResources().getString(R.string.buttonOther));
 			break;
 
 		case R.id.buttonLog:
@@ -254,9 +254,10 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		}
 	}
 
-	private void takePicture(String folder) {		
+	private void takePicture(String folder, String category) {		
 		Log.d("Arkiv", "takePicture()");
 		this.folder = folder;
+		this.category = category;
 	
 		if (camera != null) {
 //			int sdk = android.os.Build.VERSION.SDK_INT;
@@ -298,13 +299,12 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
 	        String formattedDate = df.format(c.getTime());
 	        
-			dirPath = "/sdcard/Arkiv/" + folder;
-	        filename = folder + formattedDate + ".jpg";
+	        filename = category + formattedDate + ".jpg";
 			
 	        // Save the image to the right folder on the SD card
 			FileOutputStream outStream = null;
 			try {
-				outStream = new FileOutputStream(dirPath + "/" + filename);
+				outStream = new FileOutputStream(folder + "/" + filename);
 				outStream.write(data);
 				outStream.close();
 			} catch (FileNotFoundException e) {
@@ -316,7 +316,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 			// Insert image into Media Store
 	    	ContentValues content = new ContentValues(1);
 	    	content.put(Images.Media.MIME_TYPE, "image/jpg");
-	    	content.put(MediaStore.Images.Media.DATA, dirPath + "/" + filename);
+	    	content.put(MediaStore.Images.Media.DATA, folder + "/" + filename);
 	    	
 	    	ContentResolver resolver = getContentResolver();
 	    	Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, content);
@@ -327,7 +327,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	    	if (subCategories) {
 	    		showSubCategoryDialog();
 	    	} else {
-	    		sendMail(folder, dirPath, filename);
+	    		sendMail(category, folder, filename);
 	    		camera.startPreview();  // TODO Is this needed?
 	    	}
 		}
@@ -470,7 +470,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, (String) spinCategory.getSelectedItem());
 				}
 				editor.commit();
-				sendMail(folder, dirPath, filename);
+				sendMail(category, folder, filename);
 	    		camera.startPreview();  // TODO Is this needed?
 			}
 		});

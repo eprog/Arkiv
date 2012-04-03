@@ -46,7 +46,7 @@ public class SendActivity extends Activity {
 	private static final int SELECT_PROGRAM = 0;
 	private SharedPreferences settings;
 	private Uri uri = null;
-	private String dirPath = null;
+	private String category = null;
 	private String filename = null;
 	private String folder = null;
 	
@@ -106,57 +106,61 @@ public class SendActivity extends Activity {
 		switch (view.getId()) {
 		case R.id.buttonIntyg:
 			if (subCategories) {
-				folder = "Intyg";
+				folder = getResources().getString(R.string.folderIntyg);
+				category = getResources().getString(R.string.buttonIntyg);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail("Intyg", "Intyg");
+				copyAndSendMail(getResources().getString(R.string.folderIntyg), getResources().getString(R.string.buttonIntyg));
 			}
 			break;
 		case R.id.buttonLedighet:
 			if (subCategories) {
-				folder = "Ledighet";
+				folder = getResources().getString(R.string.folderLedighet);
+				category = getResources().getString(R.string.buttonLedighet);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail("Ledighet", "Ledighet");
+				copyAndSendMail(getResources().getString(R.string.folderLedighet), getResources().getString(R.string.buttonLedighet));
 			}
 			break;
 
 		case R.id.buttonKvitto:
 			if (subCategories) {
-				folder = "Kvitto";
+				folder = getResources().getString(R.string.folderKvitto);
+				category = getResources().getString(R.string.buttonKvitto);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail("Kvitto", "Kvitto");
+				copyAndSendMail(getResources().getString(R.string.folderKvitto), getResources().getString(R.string.buttonKvitto));
 			}
 			break;
 
 		case R.id.buttonFaktura:
 			if (subCategories) {
-				folder = "Faktura";
+				folder = getResources().getString(R.string.folderFaktura);
+				category = getResources().getString(R.string.buttonFaktura);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail("Faktura", "Faktura");
+				copyAndSendMail(getResources().getString(R.string.folderFaktura), getResources().getString(R.string.buttonFaktura));
 			}
 			break;
 
 		case R.id.buttonOther:
 			if (subCategories) {
-				folder = "Other";
+				folder = getResources().getString(R.string.folderOther);
+				category = getResources().getString(R.string.buttonOther);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail("Other", "Other");
+				copyAndSendMail(getResources().getString(R.string.folderOther), getResources().getString(R.string.buttonOther));
 			}
 			break;
 
 		}
     }
 
-    private void copyAndSendMail(String type, String folder) {
+    private void copyAndSendMail(String folder, String type) {
     	Calendar c = Calendar.getInstance();
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String formattedDate = df.format(c.getTime());
-		String dirPath = "/sdcard/Arkiv/" + folder;
-        String filename = folder + formattedDate + ".jpg";
+        String filename = type + formattedDate + ".jpg";
         
     	// Copy image to archive folder
     	ContentResolver cr = getContentResolver();
@@ -177,7 +181,7 @@ public class SendActivity extends Activity {
     	// Save the image to the right folder on the SD card
     	FileOutputStream outStream = null;
     	try {
-    		outStream = new FileOutputStream(dirPath + "/" + filename);
+    		outStream = new FileOutputStream(folder + "/" + filename);
     		outStream.write(data);
     		outStream.close();
     	} catch (FileNotFoundException e) {
@@ -189,7 +193,7 @@ public class SendActivity extends Activity {
     	// Insert image into Media Store
     	ContentValues content = new ContentValues(1);
     	content.put(Images.Media.MIME_TYPE, "image/jpg");
-    	content.put(MediaStore.Images.Media.DATA, dirPath + "/" + filename);
+    	content.put(MediaStore.Images.Media.DATA, folder + "/" + filename);
     	
     	ContentResolver resolver = getContentResolver();
     	Uri uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, content);
@@ -290,7 +294,7 @@ public class SendActivity extends Activity {
 					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, (String) spinCategory.getSelectedItem());
 				}
 				editor.commit();
-				copyAndSendMail(folder, folder);
+				copyAndSendMail(folder, category);
 //				sendMail(folder, dirPath, filename);
 //	    		camera.startPreview();  // TODO Is this needed?
 			}

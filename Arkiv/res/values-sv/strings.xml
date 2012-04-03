@@ -8,6 +8,11 @@
     <string name="buttonFaktura">Faktura</string>
     <string name="buttonOther">Övrigt</string>
     <string name="buttonLog">Arkiv</string>
+    <string name="folderIntyg">/sdcard/Arkiv/Intyg</string>
+    <string name="folderLedighet">/sdcard/Arkiv/Ledighet</string>
+    <string name="folderKvitto">/sdcard/Arkiv/Kvitto</string>
+    <string name="folderFaktura">/sdcard/Arkiv/Faktura</string>
+    <string name="folderOther">/sdcard/Arkiv/Other</string>
     <string name="intyg">Intyg</string>
     <string name="emailBody">Detta mail är skickat från Androidapplikationen Arkiv så att innehållet kan lagras.</string>
     <string name="menuPreferences">Inställningar</string>

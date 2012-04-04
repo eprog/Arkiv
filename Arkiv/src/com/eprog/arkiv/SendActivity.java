@@ -5,8 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -15,13 +13,10 @@ import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -36,7 +31,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -47,7 +41,6 @@ public class SendActivity extends Activity {
 	private SharedPreferences settings;
 	private Uri uri = null;
 	private String category = null;
-	private String filename = null;
 	private String folder = null;
 	
 	@Override
@@ -82,11 +75,6 @@ public class SendActivity extends Activity {
 
             } 
         }
-	}
-
-	private void setImageURI(Uri uri2) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -295,8 +283,6 @@ public class SendActivity extends Activity {
 				}
 				editor.commit();
 				copyAndSendMail(folder, category);
-//				sendMail(folder, dirPath, filename);
-//	    		camera.startPreview();  // TODO Is this needed?
 			}
 		});
 		

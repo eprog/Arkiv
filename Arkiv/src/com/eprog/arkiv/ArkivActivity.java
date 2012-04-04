@@ -143,13 +143,14 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 	}
 
 
-	private void createFolder(String path) {
+	private boolean createFolder(String path) {
     	File folder = new File(path);
         boolean success = false;
         if(!folder.exists())
         {
             success = folder.mkdirs();
         }         
+        return success;
     }
     
     public void clickHandler(View view) {
@@ -309,8 +310,14 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 				outStream.close();
 			} catch (FileNotFoundException e) {
 				Log.d("onPictureTaken", e.getMessage());
+				Toast toast = Toast.makeText(getApplicationContext(), R.string.unableToSaveImage, Toast.LENGTH_LONG);
+				toast.show();
+				return;
 			} catch (IOException e) {
 				Log.d("onPictureTaken", e.getMessage());
+				Toast toast = Toast.makeText(getApplicationContext(), R.string.unableToSaveImage, Toast.LENGTH_LONG);
+				toast.show();
+				return;
 			}
 			
 			// Insert image into Media Store

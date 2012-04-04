@@ -37,5 +37,6 @@
     <string name="subCategoryTitle">Underkategori</string>
     <string name="subCategoryText">Välj en underkategori eller skapa en ny.</string>
     <string name="addSubCategoryText">Ny underkategori</string>
-
+    <string name="previewDescription">Kamerabild</string>
+    <string name="unableToSaveImage">Bilden kunde inte sparas på SD-kortet.</string>
 </resources>

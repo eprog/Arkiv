@@ -37,5 +37,7 @@
     <string name="subCategoryTitle">Subcategory</string>
     <string name="subCategoryText">Select a subcategory or specify a new.</string>
     <string name="addSubCategoryText">New subcategory</string>
+    <string name="previewDescription">Preview</string>
+    <string name="unableToSaveImage">Unable to save picture on SD-card.</string>
 
 </resources>

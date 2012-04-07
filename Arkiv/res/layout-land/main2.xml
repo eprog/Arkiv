@@ -30,7 +30,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
-            	android:text="@string/buttonIntyg" />
+            	android:text="@string/buttonCategory1" />
 
 			<Button
 			    android:id="@+id/buttonLedighet"
@@ -38,7 +38,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
-			    android:text="@string/buttonLedighet" />
+			    android:text="@string/buttonCategory2" />
 			
 			<Button
                 android:id="@+id/buttonKvitto"
@@ -46,7 +46,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
-                android:text="@string/buttonKvitto" />
+                android:text="@string/buttonCategory3" />
 
         </TableRow>
 
@@ -62,7 +62,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
-                android:text="@string/buttonFaktura" />
+                android:text="@string/buttonCategory4" />
 
             <Button
                 android:id="@+id/buttonOther"
@@ -70,7 +70,7 @@
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:onClick="clickHandler"
-                android:text="@string/buttonOther" />
+                android:text="@string/buttonCategory5" />
 
             <Button
                 android:id="@+id/buttonLog"

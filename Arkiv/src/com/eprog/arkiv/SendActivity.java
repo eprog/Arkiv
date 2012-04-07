@@ -17,6 +17,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,15 +25,21 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.Editable;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class SendActivity extends Activity {
@@ -47,6 +54,8 @@ public class SendActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.send);
+		// Avoid screen rotation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		
@@ -75,6 +84,19 @@ public class SendActivity extends Activity {
 
             } 
         }
+        
+        // Register context menu for buttons
+        Button b = null;
+        String label = null;
+        String buttonID = null;
+        int resID = 0;
+
+        for (int i = 1; i < 7; i++) {
+        	buttonID = "buttonCategory" + i;
+        	resID = getResources().getIdentifier(buttonID, "id", "com.eprog.arkiv");
+        	b = (Button)findViewById(resID);
+        	registerForContextMenu(b);
+        }
 	}
 
 	@Override
@@ -85,7 +107,101 @@ public class SendActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		setButtonLabels();
 	}
+	
+	/**
+	 * Set button labels if they have been modified by the user.
+	 */
+	private void setButtonLabels() {
+		Button b = null;
+		String label = null;
+		String buttonID = null;
+		int resID = 0;
+		
+		for (int i = 1; i < 7; i++) {
+			buttonID = "buttonCategory" + i;
+			resID = getResources().getIdentifier(buttonID, "id", "com.eprog.arkiv");
+
+			label = settings.getString(Settings.PREF_CATEGORY + i, "");
+			if (label != null && !label.equals("")) {
+				b = (Button)findViewById(resID);
+				b.setText(label);
+			}
+		}
+	}
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		menu.setHeaderTitle(R.string.contextMenuTitle);
+		String desc = (String)v.getContentDescription();
+		int order = Menu.NONE;
+		if (desc.length() == 1) {
+			order = Integer.parseInt(desc);
+		}
+		MenuItem item = menu.add(0, v.getId(), order, getResources().getString(R.string.menuRename));
+		
+	}
+	
+	
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		super.onContextItemSelected(item);
+		
+		renameCategory(item.getItemId(), item.getOrder());
+		
+		return false;
+		
+	}
+	
+	private int categoryNr;
+	
+	// Let the user rename the category identified by the id
+	private void renameCategory(int id, int nr) {
+		
+		this.categoryNr = nr;
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.menuRename);
+		LayoutInflater inflater = getLayoutInflater();
+		dialoglayout = inflater.inflate(R.layout.rename, (ViewGroup) getCurrentFocus());
+		builder.setView(dialoglayout);
+		AlertDialog dialog = builder.create();
+		Window w = dialog.getWindow();
+		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+		
+//		TextView text = (TextView)dialoglayout.findViewById(R.id.renameDescription);
+//		text.setText(R.string.subCategoryText);
+		
+		builder.setPositiveButton("OK", new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				Editor editor = settings.edit();
+				// Get sub-category
+				EditText text = (EditText)dialoglayout.findViewById(R.id.editCategory);
+				Editable newCategory = text.getText();
+				
+				if (newCategory.length() > 0) {
+					// TODO Save new name for selected category
+					editor.putString(Settings.PREF_CATEGORY + categoryNr, newCategory.toString());
+					editor.commit();
+					// TODO Create category folder if it not exists
+					setButtonLabels();
+					Toast toast = Toast.makeText(getApplicationContext(), "New name: " + newCategory.toString(), Toast.LENGTH_SHORT);
+					toast.show();
+				} 				
+			}
+		});
+		
+		builder.show();
+	}
+
+
 	
     public void clickHandler(View view) {
     	// Check if subcategory dialog shall be shown
@@ -95,49 +211,49 @@ public class SendActivity extends Activity {
 		case R.id.buttonIntyg:
 			if (subCategories) {
 				folder = getResources().getString(R.string.folderIntyg);
-				category = getResources().getString(R.string.buttonIntyg);
+				category = getResources().getString(R.string.buttonCategory1);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail(getResources().getString(R.string.folderIntyg), getResources().getString(R.string.buttonIntyg));
+				copyAndSendMail(getResources().getString(R.string.folderIntyg), getResources().getString(R.string.buttonCategory1));
 			}
 			break;
 		case R.id.buttonLedighet:
 			if (subCategories) {
 				folder = getResources().getString(R.string.folderLedighet);
-				category = getResources().getString(R.string.buttonLedighet);
+				category = getResources().getString(R.string.buttonCategory2);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail(getResources().getString(R.string.folderLedighet), getResources().getString(R.string.buttonLedighet));
+				copyAndSendMail(getResources().getString(R.string.folderLedighet), getResources().getString(R.string.buttonCategory2));
 			}
 			break;
 
 		case R.id.buttonKvitto:
 			if (subCategories) {
 				folder = getResources().getString(R.string.folderKvitto);
-				category = getResources().getString(R.string.buttonKvitto);
+				category = getResources().getString(R.string.buttonCategory3);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail(getResources().getString(R.string.folderKvitto), getResources().getString(R.string.buttonKvitto));
+				copyAndSendMail(getResources().getString(R.string.folderKvitto), getResources().getString(R.string.buttonCategory3));
 			}
 			break;
 
 		case R.id.buttonFaktura:
 			if (subCategories) {
 				folder = getResources().getString(R.string.folderFaktura);
-				category = getResources().getString(R.string.buttonFaktura);
+				category = getResources().getString(R.string.buttonCategory4);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail(getResources().getString(R.string.folderFaktura), getResources().getString(R.string.buttonFaktura));
+				copyAndSendMail(getResources().getString(R.string.folderFaktura), getResources().getString(R.string.buttonCategory4));
 			}
 			break;
 
 		case R.id.buttonOther:
 			if (subCategories) {
 				folder = getResources().getString(R.string.folderOther);
-				category = getResources().getString(R.string.buttonOther);
+				category = getResources().getString(R.string.buttonCategory5);
 	    		showSubCategoryDialog(); 
 			} else {
-				copyAndSendMail(getResources().getString(R.string.folderOther), getResources().getString(R.string.buttonOther));
+				copyAndSendMail(getResources().getString(R.string.folderOther), getResources().getString(R.string.buttonCategory5));
 			}
 			break;
 

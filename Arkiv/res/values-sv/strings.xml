@@ -2,12 +2,19 @@
 <resources>
 
     <string name="app_name">Arkiv</string>
-    <string name="buttonIntyg">Intyg</string>
-    <string name="buttonLedighet">Ledighet</string>
-    <string name="buttonKvitto">Kvitto</string>
-    <string name="buttonFaktura">Faktura</string>
-    <string name="buttonOther">Övrigt</string>
+    <string name="buttonCategory1">Intyg</string>
+    <string name="buttonCategory2">Ledighet</string>
+    <string name="buttonCategory3">Kvitto</string>
+    <string name="buttonCategory4">Faktura</string>
+    <string name="buttonCategory5">Annons</string>
+    <string name="buttonCategory6">Övrigt</string>
     <string name="buttonLog">Arkiv</string>
+    <string name="category1">Intyg</string>
+    <string name="category2">Ledighet</string>
+    <string name="category3">Kvitto</string>
+    <string name="category4">Faktura</string>
+    <string name="category5">Annons</string>
+    <string name="category6">Övrigt</string>
     <string name="folderIntyg">/sdcard/Arkiv/Intyg</string>
     <string name="folderLedighet">/sdcard/Arkiv/Ledighet</string>
     <string name="folderKvitto">/sdcard/Arkiv/Kvitto</string>
@@ -21,7 +28,7 @@
     <string name="aboutTitle">Om Arkiv</string>
     <string name="aboutText">Arkiv är skapat av Erik Jonsson 2012.</string>
     <string name="helpTitle">Hjälp</string>
-    <string name="helpText">Arkiv är en Androidapp som kan spara viktiga dokument elektroniskt. Rikta mobilens kamera mot dokumentet du vill spara och tryck sedan på knappen för rätt kategori. En bild av dokumentet spara då på telefonens minneskort i katalogen Arkiv som har underkataloger för varje kategori. Om en epostadress är angiven under Inställningar så kan bilden även skickas via mejl. </string>
+    <string name="helpText">Arkiv är en Androidapp som kan spara viktiga dokument elektroniskt. Rikta mobilens kamera mot dokumentet du vill spara och tryck sedan på knappen för rätt kategori. En bild av dokumentet sparas då på telefonens minneskort i katalogen Arkiv som har underkataloger för varje kategori. Om en epostadress är angiven under Inställningar så kan bilden även skickas via mejl. </string>
     <string name="preferenceCategoryEmail">Epostinställningar</string>
     <string name="preferenceEmailAddress">Epostaddress</string>
     <string name="preferenceSendEmail">Skicka epost</string>
@@ -39,4 +46,7 @@
     <string name="addSubCategoryText">Ny underkategori</string>
     <string name="previewDescription">Kamerabild</string>
     <string name="unableToSaveImage">Bilden kunde inte sparas på SD-kortet.</string>
+    <string name="contextMenuTitle">Meny</string>
+    <string name="menuRename">Byt namn</string>
+    <string name="renameText">Ange ett nytt namn</string>
 </resources>

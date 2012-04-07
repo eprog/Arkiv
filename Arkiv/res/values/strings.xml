@@ -2,16 +2,25 @@
 <resources>
 
     <string name="app_name">Arkiv</string>
-    <string name="buttonIntyg">Certificate</string>
-    <string name="buttonLedighet">Holiday</string>
-    <string name="buttonKvitto">Receipt</string>
-    <string name="buttonFaktura">Invoice</string>
-    <string name="buttonOther">Other</string>
+    <string name="buttonCategory1">Certificate</string>
+    <string name="buttonCategory2">Holiday</string>
+    <string name="buttonCategory3">Receipt</string>
+    <string name="buttonCategory4">Invoice</string>
+    <string name="buttonCategory5">Ad</string>
+    <string name="buttonCategory6">Other</string>
     <string name="buttonLog">Archive</string>
+    <string name="category1">Certificate</string>
+    <string name="category2">Holiday</string>
+    <string name="category3">Receipt</string>
+    <string name="category4">Invoice</string>
+    <string name="category5">Ad</string>
+    <string name="category6">Other</string>
+    <string name="rootPath">/sdcard/Arkiv/</string>
     <string name="folderIntyg">/sdcard/Arkiv/Certificate</string>
     <string name="folderLedighet">/sdcard/Arkiv/Holiday</string>
     <string name="folderKvitto">/sdcard/Arkiv/Receipt</string>
     <string name="folderFaktura">/sdcard/Arkiv/Invoice</string>
+    <string name="folderAd">/sdcard/Arkiv/Ads</string>
     <string name="folderOther">/sdcard/Arkiv/Other</string>
     <string name="intyg">Certificate</string>
     <string name="emailBody">Detta mail är skickat från Androidapplikationen Arkiv så att innehållet kan lagras.</string>
@@ -39,5 +48,7 @@
     <string name="addSubCategoryText">New subcategory</string>
     <string name="previewDescription">Preview</string>
     <string name="unableToSaveImage">Unable to save picture on SD-card.</string>
-
+    <string name="contextMenuTitle">Context Menu</string>
+	<string name="menuRename">Rename</string>
+	<string name="renameText">Enter a new name</string>
 </resources>

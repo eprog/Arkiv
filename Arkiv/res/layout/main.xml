@@ -3,7 +3,7 @@
         android:id="@+id/tableLayout1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.82" >
+        android:layout_weight="0.82" > 
         <TableRow
             android:id="@+id/tableRow1"
             android:layout_width="fill_parent"
@@ -12,23 +12,25 @@
             android:gravity="center_horizontal" >
             
             <Button
-            	android:id="@+id/buttonIntyg"
+            	android:id="@+id/buttonCategory1"
             	android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-            	android:text="@string/buttonIntyg" 
-            	android:textColor="#000000" />
+            	android:text="@string/buttonCategory1" 
+            	android:textColor="#000000" 
+            	android:contentDescription="1" />
 			<Button
-			    android:id="@+id/buttonLedighet"
+			    android:id="@+id/buttonCategory2"
 			    android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-			    android:text="@string/buttonLedighet" 
-			    android:textColor="#000000" />
+			    android:text="@string/buttonCategory2" 
+			    android:textColor="#000000"
+			    android:contentDescription="2" />
 
         </TableRow>
 
@@ -39,24 +41,26 @@
             android:gravity="center_horizontal" >
 
             <Button
-                android:id="@+id/buttonKvitto"
+                android:id="@+id/buttonCategory3"
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonKvitto" 
-                android:textColor="#000000" />
+                android:text="@string/buttonCategory3" 
+                android:textColor="#000000"
+                android:contentDescription="3" />
 
             <Button
-                android:id="@+id/buttonFaktura"
+                android:id="@+id/buttonCategory4"
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonFaktura" 
-                android:textColor="#000000" />
+                android:text="@string/buttonCategory4" 
+                android:textColor="#000000"
+                android:contentDescription="4" />
 
         </TableRow>
 
@@ -67,25 +71,27 @@
             android:gravity="center_horizontal" >
 
             <Button
-                android:id="@+id/buttonOther"
+                android:id="@+id/buttonCategory5"
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonOther" 
-                android:textColor="#000000" />
-
-            <!-- <Button
-                android:id="@+id/buttonLog"
+                android:text="@string/buttonCategory5" 
+                android:textColor="#000000"
+                android:contentDescription="5" />
+            
+            <Button
+                android:id="@+id/buttonCategory6"
                 android:layout_width="0dip"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
-                android:background="@drawable/archive66"
+                android:background="@drawable/folder66"
                 android:onClick="clickHandler"
-                android:text="@string/buttonLog"
-                android:textColor="#000000"  />
- -->
+                android:text="@string/buttonCategory6" 
+                android:textColor="#000000"
+                android:contentDescription="6" />
+
         </TableRow>
         <TableRow
             android:id="@+id/tableRow4"

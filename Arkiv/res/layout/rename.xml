@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tableLayout1"
+    android:id="@+id/tableLayoutRename"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_weight="0.82" >
@@ -13,14 +13,14 @@
         android:gravity="center_horizontal" >
 
         <TextView
-            android:id="@+id/subCategoryDescription"
-            android:layout_width="wrap_content"
+            android:id="@+id/renameDescription"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="17dp"
-            android:text="@string/subCategoryText"
+            android:text="@string/renameText"
             android:textAppearance="?android:attr/textAppearanceMedium" />
-    </TableRow>
 
+    </TableRow>
     <TableRow
         android:id="@+id/tableRow2"
         android:layout_width="fill_parent"
@@ -28,25 +28,12 @@
         android:layout_gravity="fill_horizontal"
         android:gravity="center_horizontal" >
         <EditText
-            android:id="@+id/editSubCategory"
-            android:layout_width="match_parent"
+            android:id="@+id/editCategory"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content" >
+
             <requestFocus />
         </EditText>
-    </TableRow>
-
-    <TableRow
-        android:id="@+id/tableRow3"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="fill_horizontal"
-        android:gravity="center_horizontal" >
-
-        <Spinner
-            android:id="@+id/subCategorySpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp" />
     </TableRow>
 
 </TableLayout>

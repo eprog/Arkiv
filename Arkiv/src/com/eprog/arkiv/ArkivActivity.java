@@ -17,6 +17,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -32,6 +33,8 @@ import android.provider.MediaStore;
 import android.provider.MediaStore.Images;
 import android.text.Editable;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,6 +47,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -69,28 +73,28 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        
-        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        // Avoid screen rotation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-//        Boolean onTop = settings.getBoolean("PREF_BUTTONS_ON_TOP", true);
-//		if (onTop) {
-//			setContentView(R.layout.main);
-//		} else {
-//			setContentView(R.layout.main2);
-//		}
-		
-        // Create folders
-        createFolder(getResources().getString(R.string.folderIntyg));
-        createFolder(getResources().getString(R.string.folderLedighet));
-        createFolder(getResources().getString(R.string.folderKvitto));
-        createFolder(getResources().getString(R.string.folderFaktura));
-        createFolder(getResources().getString(R.string.folderOther));        
+        settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+	       
+        for (int i = 1; i < 7; i++) {
+        	createFolder(Settings.PREF_CATEGORY + i);
+        }        
         
-//		surface = (SurfaceView)findViewById(R.id.surface);
-//		holder = surface.getHolder();
-//        holder.addCallback(this);
-//        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-//        holder.setFixedSize(300, 200);
+        // Register context menu for buttons
+        Button b = null;
+		String label = null;
+		String buttonID = null;
+		int resID = 0;
+		
+		for (int i = 1; i < 7; i++) {
+			buttonID = "buttonCategory" + i;
+			resID = getResources().getIdentifier(buttonID, "id", "com.eprog.arkiv");
+			b = (Button)findViewById(resID);
+			registerForContextMenu(b);
+		}
+        
     }
     
     @Override
@@ -100,9 +104,7 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		deactivateCamera();
 		holder.removeCallback(this);
 		surface = null;
-		
-		// TODO Save folder, path and filename, reinitiate them in onResume()
-	}
+    }
 
 	@Override
 	protected void onResume() {
@@ -121,6 +123,10 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
 		}
 		
 		surface = (SurfaceView)findViewById(R.id.surface);
+		
+		// Change button text if necessary
+		setButtonLabels();
+		
 		holder = surface.getHolder();
         holder.addCallback(this);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -142,9 +148,105 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         }
 	}
 
+	
 
-	private boolean createFolder(String path) {
-    	File folder = new File(path);
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		menu.setHeaderTitle(R.string.contextMenuTitle);
+		String desc = (String)v.getContentDescription();
+		int order = Menu.NONE;
+		if (desc.length() == 1) {
+			order = Integer.parseInt(desc);
+		}
+		MenuItem item = menu.add(0, v.getId(), order, getResources().getString(R.string.menuRename));
+		
+	}
+	
+	
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		super.onContextItemSelected(item);
+		
+		renameCategory(item.getItemId(), item.getOrder());
+		
+		return false;
+		
+	}
+	
+	private int categoryNr;
+	
+	// Let the user rename the category identified by the id
+	private void renameCategory(int id, int nr) {
+		
+		this.categoryNr = nr;
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(R.string.menuRename);
+		LayoutInflater inflater = getLayoutInflater();
+		dialoglayout = inflater.inflate(R.layout.rename, (ViewGroup) getCurrentFocus());
+		builder.setView(dialoglayout);
+		AlertDialog dialog = builder.create();
+		Window w = dialog.getWindow();
+		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
+		
+//		TextView text = (TextView)dialoglayout.findViewById(R.id.renameDescription);
+//		text.setText(R.string.subCategoryText);
+		
+		builder.setPositiveButton("OK", new OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				Editor editor = settings.edit();
+				// Get sub-category
+				EditText text = (EditText)dialoglayout.findViewById(R.id.editCategory);
+				Editable newCategory = text.getText();
+				
+				if (newCategory.length() > 0) {
+					// TODO Save new name for selected category
+					editor.putString(Settings.PREF_CATEGORY + categoryNr, newCategory.toString());
+					editor.commit();
+					// TODO Create category folder if it not exists
+					setButtonLabels();
+					Toast toast = Toast.makeText(getApplicationContext(), "New name: " + newCategory.toString(), Toast.LENGTH_SHORT);
+					toast.show();
+				} 				
+			}
+		});
+		
+		builder.show();
+	}
+
+	/**
+	 * Set button labels if they have been modified by the user.
+	 */
+	private void setButtonLabels() {
+		Button b = null;
+		String label = null;
+		String buttonID = null;
+		int resID = 0;
+		
+		for (int i = 1; i < 7; i++) {
+			buttonID = "buttonCategory" + i;
+			resID = getResources().getIdentifier(buttonID, "id", "com.eprog.arkiv");
+
+			label = settings.getString(Settings.PREF_CATEGORY + i, "");
+			if (label != null && !label.equals("")) {
+				b = (Button)findViewById(resID);
+				b.setText(label);
+			}
+		}
+	}
+
+	private boolean createFolder(String category) {
+		String folderName = settings.getString(category, "");
+		
+		if (folderName.equals("")) {
+			
+		}
+		
+    	File folder = new File(getResources().getString(R.string.rootPath) + folderName);
         boolean success = false;
         if(!folder.exists())
         {
@@ -152,26 +254,56 @@ public class ArkivActivity extends Activity implements SurfaceHolder.Callback {
         }         
         return success;
     }
+	
+	private String getFolder(int category) {
+		String folder = null;
+		switch (category) {
+		case 1:
+			folder = settings.getString(Settings.PREF_CATEGORY1, getResources().getString(R.string.category1));
+			break;
+		case 2:
+			folder = settings.getString(Settings.PREF_CATEGORY2, getResources().getString(R.string.category2));
+			break;
+		case 3:
+			folder = settings.getString(Settings.PREF_CATEGORY3, getResources().getString(R.string.category3));
+			break;
+		case 4:
+			folder = settings.getString(Settings.PREF_CATEGORY4, getResources().getString(R.string.category4));
+			break;
+		case 5:
+			folder = settings.getString(Settings.PREF_CATEGORY5, getResources().getString(R.string.category5));
+			break;
+		case 6:
+		default:
+			folder = settings.getString(Settings.PREF_CATEGORY6, getResources().getString(R.string.category6));
+			break;
+		}
+		return folder;
+	}
     
     public void clickHandler(View view) {
 		switch (view.getId()) {
-		case R.id.buttonIntyg:
-			takePicture(getResources().getString(R.string.folderIntyg), getResources().getString(R.string.buttonIntyg));
+		case R.id.buttonCategory1:
+			takePicture(getResources().getString(R.string.folderIntyg), getResources().getString(view.getId()));
 			break;
-		case R.id.buttonLedighet:
-			takePicture(getResources().getString(R.string.folderLedighet), getResources().getString(R.string.buttonLedighet));
-			break;
-
-		case R.id.buttonKvitto:
-			takePicture(getResources().getString(R.string.folderKvitto), getResources().getString(R.string.buttonKvitto));
+		case R.id.buttonCategory2:
+			takePicture(getResources().getString(R.string.folderLedighet), getResources().getString(view.getId()));
 			break;
 
-		case R.id.buttonFaktura:
-			takePicture(getResources().getString(R.string.folderFaktura), getResources().getString(R.string.buttonFaktura));
+		case R.id.buttonCategory3:
+			takePicture(getResources().getString(R.string.folderKvitto), getResources().getString(view.getId()));
 			break;
 
-		case R.id.buttonOther:
-			takePicture(getResources().getString(R.string.folderOther), getResources().getString(R.string.buttonOther));
+		case R.id.buttonCategory4:
+			takePicture(getResources().getString(R.string.folderFaktura), getResources().getString(view.getId()));
+			break;
+
+		case R.id.buttonCategory5:
+			takePicture(getResources().getString(R.string.folderAd), getResources().getString(view.getId()));
+			break;
+			
+		case R.id.buttonCategory6:
+			takePicture(getResources().getString(R.string.folderOther), getResources().getString(view.getId()));
 			break;
 
 		case R.id.buttonLog:

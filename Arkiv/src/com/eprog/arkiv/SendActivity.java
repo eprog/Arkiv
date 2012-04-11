@@ -42,13 +42,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class SendActivity extends Activity {
+public class SendActivity extends BaseActivity {
 	
-	private static final int SELECT_PROGRAM = 0;
-	private SharedPreferences settings;
 	private Uri uri = null;
-	private String category = null;
-	private String folder = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +92,7 @@ public class SendActivity extends Activity {
         	resID = getResources().getIdentifier(buttonID, "id", "com.eprog.arkiv");
         	b = (Button)findViewById(resID);
         	registerForContextMenu(b);
+//        	b.getBackground().setAlpha(45);
         }
 	}
 
@@ -110,98 +107,6 @@ public class SendActivity extends Activity {
 		
 		setButtonLabels();
 	}
-	
-	/**
-	 * Set button labels if they have been modified by the user.
-	 */
-	private void setButtonLabels() {
-		Button b = null;
-		String label = null;
-		String buttonID = null;
-		int resID = 0;
-		
-		for (int i = 1; i < 7; i++) {
-			buttonID = "buttonCategory" + i;
-			resID = getResources().getIdentifier(buttonID, "id", "com.eprog.arkiv");
-
-			label = settings.getString(Settings.PREF_CATEGORY + i, "");
-			if (label != null && !label.equals("")) {
-				b = (Button)findViewById(resID);
-				b.setText(label);
-			}
-		}
-	}
-	
-	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		
-		menu.setHeaderTitle(R.string.contextMenuTitle);
-		String desc = (String)v.getContentDescription();
-		int order = Menu.NONE;
-		if (desc.length() == 1) {
-			order = Integer.parseInt(desc);
-		}
-		MenuItem item = menu.add(0, v.getId(), order, getResources().getString(R.string.menuRename));
-		
-	}
-	
-	
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		super.onContextItemSelected(item);
-		
-		renameCategory(item.getItemId(), item.getOrder());
-		
-		return false;
-		
-	}
-	
-	private int categoryNr;
-	
-	// Let the user rename the category identified by the id
-	private void renameCategory(int id, int nr) {
-		
-		this.categoryNr = nr;
-		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.menuRename);
-		LayoutInflater inflater = getLayoutInflater();
-		dialoglayout = inflater.inflate(R.layout.rename, (ViewGroup) getCurrentFocus());
-		builder.setView(dialoglayout);
-		AlertDialog dialog = builder.create();
-		Window w = dialog.getWindow();
-		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-		
-//		TextView text = (TextView)dialoglayout.findViewById(R.id.renameDescription);
-//		text.setText(R.string.subCategoryText);
-		
-		builder.setPositiveButton("OK", new OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {
-				Editor editor = settings.edit();
-				// Get sub-category
-				EditText text = (EditText)dialoglayout.findViewById(R.id.editCategory);
-				Editable newCategory = text.getText();
-				
-				if (newCategory.length() > 0) {
-					// TODO Save new name for selected category
-					editor.putString(Settings.PREF_CATEGORY + categoryNr, newCategory.toString());
-					editor.commit();
-					// TODO Create category folder if it not exists
-					setButtonLabels();
-					Toast toast = Toast.makeText(getApplicationContext(), "New name: " + newCategory.toString(), Toast.LENGTH_SHORT);
-					toast.show();
-				} 				
-			}
-		});
-		
-		builder.show();
-	}
-
-
 	
     public void clickHandler(View view) {
     	// Check if subcategory dialog shall be shown
@@ -355,53 +260,4 @@ public class SendActivity extends Activity {
     	return ous.toByteArray();
     }
     
-    private View dialoglayout = null;
-	
-	private void showSubCategoryDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.subCategoryTitle);
-		LayoutInflater inflater = getLayoutInflater();
-		dialoglayout = inflater.inflate(R.layout.subcategory, (ViewGroup) getCurrentFocus());
-		builder.setView(dialoglayout);
-		AlertDialog dialog = builder.create();
-		Window w = dialog.getWindow();
-		w.setFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND, WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
-		
-		TextView text = (TextView)dialoglayout.findViewById(R.id.subCategoryDescription);
-		text.setText(R.string.subCategoryText);
-		
-		Spinner spinCategory = (Spinner) dialoglayout.findViewById(R.id.subCategorySpinner);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		int count = settings.getInt(Settings.PREF_CATEGORY1_SUB_COUNT, 0);
-		for (int i = 0; i < count; i++) {
-			adapter.add(settings.getString(Settings.PREF_CATEGORY1_SUB + i, ""));
-		}
-		spinCategory.setAdapter(adapter);
-		
-		builder.setPositiveButton("OK", new OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {
-				Editor editor = settings.edit();
-				// Get sub-category
-				EditText text = (EditText)dialoglayout.findViewById(R.id.editSubCategory);
-				Editable newCategory = text.getText();
-				
-				if (newCategory.length() > 0) {
-					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, newCategory.toString());
-					// Save new category
-					int count = settings.getInt(Settings.PREF_CATEGORY1_SUB_COUNT, 0);
-					editor.putString(Settings.PREF_CATEGORY1_SUB + count, newCategory.toString());
-					editor.putInt(Settings.PREF_CATEGORY1_SUB_COUNT, count + 1);
-				} else {
-					Spinner spinCategory = (Spinner) dialoglayout.findViewById(R.id.subCategorySpinner);
-					editor.putString(Settings.PREF_SELCETED_SUB_CATEGORY, (String) spinCategory.getSelectedItem());
-				}
-				editor.commit();
-				copyAndSendMail(folder, category);
-			}
-		});
-		
-		builder.show();
-	}
 }

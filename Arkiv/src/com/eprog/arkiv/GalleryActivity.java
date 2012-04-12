@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -44,12 +45,16 @@ public class GalleryActivity extends Activity {
 	    folder = b.getString("folder");
 	    startFolder = folder;
 	    
+	    Toast.makeText(GalleryActivity.this, folder, Toast.LENGTH_LONG).show();
+	    
 	    // List folder and add paths to mImages
 	    File dir = new File(folder);
 	    File[] files = dir.listFiles();
-	    mImages = new String[files.length];
-	    for (int i = 0; i < files.length; i++) {
-	    	mImages[i] = files[i].getPath();
+	    if (files != null && files.length > 0) {
+	    	mImages = new String[files.length];
+	    	for (int i = 0; i < files.length; i++) {
+	    		mImages[i] = files[i].getPath();
+	    	}
 	    }
 	    
 	    gallery = (Gallery) findViewById(R.id.gallery);
@@ -74,12 +79,22 @@ public class GalleryActivity extends Activity {
 	            	adapter.notifyDataSetChanged();
 	            	gallery.setSelection(0);
 	            	
-	            	ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-	            	imageView.setImageResource(0); //setImageBitmap(loadBitmap(mImages[position], 2));
+//	            	ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+//	            	imageView.setImageResource(0); //setImageBitmap(loadBitmap(mImages[position], 2));
+	            	WebView webView = (WebView) findViewById(R.id.ImageView01);
+	            	webView.clearView(); //setImageBitmap(loadBitmap(mImages[position], 2));
 	            } else {
 	            	// File selected
-	            	ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-	            	imageView.setImageBitmap(loadBitmap(mImages[position], 2));
+//	            	ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+//	            	imageView.setImageBitmap(loadBitmap(mImages[position], 2));
+	            	WebView webView = (WebView) findViewById(R.id.ImageView01);	            	
+	            	webView.getSettings().setBuiltInZoomControls(true);
+	            	webView.getSettings().setLoadWithOverviewMode(true);
+	            	webView.getSettings().setUseWideViewPort(true);
+//	            	webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+	            	webView.setScrollbarFadingEnabled(true);	            	
+
+	            	webView.loadUrl("file://" + mImages[position]);
 	            }
 	        }
 	    });
@@ -105,8 +120,10 @@ public class GalleryActivity extends Activity {
     	    adapter.notifyDataSetChanged();
     	    gallery.setSelection(0);
     	    
-    	    ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
-        	imageView.setImageDrawable(null);
+//    	    ImageView imageView = (ImageView) findViewById(R.id.ImageView01);
+//        	imageView.setImageDrawable(null);
+    	    WebView webView = (WebView) findViewById(R.id.ImageView01);
+        	webView.clearView();
 		}
 	}
 
@@ -143,6 +160,9 @@ public class GalleryActivity extends Activity {
 	    }
 
 	    public int getCount() {
+	    	if (mImages == null) {
+	    		return 0;
+	    	}
 	        return mImages.length;
 	    }
 

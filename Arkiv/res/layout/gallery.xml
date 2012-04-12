@@ -7,11 +7,16 @@
     android:id="@+id/gallery"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
-<ImageView android:id="@+id/ImageView01"
+<!-- <ImageView android:id="@+id/ImageView01"
     android:layout_gravity="center_vertical|center_horizontal"
     android:layout_width="wrap_content" 
     android:layout_height="wrap_content"
-    android:contentDescription="Selected image">
-    
-</ImageView>
+    android:contentDescription="Selected image">  
+</ImageView> -->
+<WebView android:id="@+id/ImageView01"
+    android:layout_gravity="center_vertical|center_horizontal"
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:contentDescription="Selected image">  
+</WebView>
 </LinearLayout>

@@ -83,7 +83,30 @@ public abstract class BaseActivity extends Activity {
 	private void openCategoryFolder(int order) {       
         Intent intent = new Intent(this, GalleryActivity.class);
 		Bundle b = new Bundle();
-		b.putString("folder", "/sdcard/Arkiv" + settings.getString(Settings.PREF_CATEGORY + order, ""));
+		String folder = settings.getString(Settings.PREF_CATEGORY + order, "");
+		if (folder == null || folder.length() == 0) {
+			switch (order) {
+			case 1:
+				folder = getResources().getString(R.string.category1);
+				break;
+			case 2:
+				folder = getResources().getString(R.string.category2);
+				break;
+			case 3:
+				folder = getResources().getString(R.string.category3);
+				break;
+			case 4:
+				folder = getResources().getString(R.string.category4);
+				break;
+			case 5:
+				folder = getResources().getString(R.string.category5);
+				break;
+			case 6:
+				folder = getResources().getString(R.string.category6);
+				break;
+			}
+		}
+		b.putString("folder", "/sdcard/Arkiv/" + folder);
 		Log.d("Arkiv", "folder: " + b.getString("folder"));
 		intent.putExtras(b);
 		startActivity(intent);

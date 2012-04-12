@@ -113,7 +113,12 @@ public abstract class BaseActivity extends Activity {
 		EditText text = (EditText)dialoglayout.findViewById(R.id.editCategory);
 		String category = settings.getString(Settings.PREF_CATEGORY + categoryNr, "");
 		if (category == null || category.length() == 0) {
-			category = getResources().getString(getResources().getIdentifier(Settings.PREF_CATEGORY + categoryNr, "string", getPackageName()));
+			try {
+				category = getResources().getString(getResources().getIdentifier(Settings.PREF_CATEGORY + categoryNr, "string", getPackageName()));
+			} catch (Exception e) {
+				Log.d("Arkiv", "Category not found.");
+				category = ""; // TODO Get default category name
+			}
 		}
 		text.setText(category);
 		

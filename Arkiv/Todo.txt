@@ -1,25 +1,21 @@
 Things left to do:
 
-1. Implement own image gallery to only show archived items.
+1. Use OCR (TesserAct) to detect sub-categories [Optional]
 
-2. Use OCR (TesserAct) to detect sub-categories [Optional]
+2. Widget
 
-3. Edit/Remove sub-categories
-
-4. Widget
-
-5. Search in the archive
+3. Search in the archive
 
 Known issues:
 
 1. Email is not sent directly because Google don't allow it for security reasons.
    To support this "sendmail" needs to be implemented in the App. Not worth it!
    
-2. The Arkiv button opens the Gallery app which shows all image folders, not only those related to this app. (Disabled in 1.0)
+2. Camera preview not working after screen off.
 
-3. Camera preview not working after screen off.
+3. Gallery: Zoom is not working properly. Impossible to zoom out on large images.
 
-4. 
+4. Gallery: Folder names not scaled correctly for folders where first image have low resolution. (minor)  
 
-   
+5.
  
